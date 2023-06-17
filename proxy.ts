@@ -20,5 +20,3 @@ app.get('/', async (req: any, res: any) => {
 });
 
 app.listen(8080);
-
-setInterval(() => {});
