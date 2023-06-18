@@ -25,7 +25,7 @@ const { Comics } = require("comics-api")
 > comicId: string
 
 ```javascript
-Nuxtify.getChapters('tham-tu-conan-46391');
+Comics.getChapters('tham-tu-conan-46391');
 ```
 
 ### _Search Comics_
@@ -34,7 +34,7 @@ Nuxtify.getChapters('tham-tu-conan-46391');
 > page: number _(option)_
 
 ```javascript
-Nuxtify.searchComics('conan');
+Comics.searchComics('conan');
 ```
 
 ### _Comic Detail_
@@ -42,7 +42,7 @@ Nuxtify.searchComics('conan');
 > comicId: string
 
 ```javascript
-Nuxtify.getComicDetail('tham-tu-conan-46391');
+Comics.getComicDetail('tham-tu-conan-46391');
 ```
 
 ### _Images By Chapter_
@@ -52,13 +52,13 @@ Nuxtify.getComicDetail('tham-tu-conan-46391');
 > chapterId: number
 
 ```javascript
-Nuxtify.getImages('tham-tu-conan-46391', 1114, 1011493);
+Comics.getImages('tham-tu-conan-46391', 1114, 1011493);
 ```
 
 ### _Genres_
 
 ```javascript
-Nuxtify.getGenres();
+Comics.getGenres();
 ```
 
 ### _Trending Comics_
@@ -66,7 +66,7 @@ Nuxtify.getGenres();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTrending();
+Comics.getTrending();
 ```
 
 ### _Recommend Comics_
@@ -74,7 +74,7 @@ Nuxtify.getTrending();
 > type: hot | boy | girl _(option)_
 
 ```javascript
-Nuxtify.getRecommendComics();
+Comics.getRecommendComics();
 ```
 
 ### _New Update Comics_
@@ -82,7 +82,7 @@ Nuxtify.getRecommendComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getNewUpdateComics();
+Comics.getNewUpdateComics();
 ```
 
 ### _Completed Comics_
@@ -90,7 +90,7 @@ Nuxtify.getNewUpdateComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getCompletedComics();
+Comics.getCompletedComics();
 ```
 
 ### _Boy Comics_
@@ -98,7 +98,7 @@ Nuxtify.getCompletedComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getBoyComics();
+Comics.getBoyComics();
 ```
 
 ### _Girl Comics_
@@ -106,7 +106,7 @@ Nuxtify.getBoyComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getGirlComics();
+Comics.getGirlComics();
 ```
 
 ### _New Comics_
@@ -115,7 +115,7 @@ Nuxtify.getGirlComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getNewComics();
+Comics.getNewComics();
 ```
 
 ### _Comics By Genre_
@@ -125,7 +125,7 @@ Nuxtify.getNewComics();
 > status: all | finished | updating _(option)_
 
 ```javascript
-Nuxtify.getComicsByGenre();
+Comics.getComicsByGenre();
 ```
 
 ### _Top Daily_
@@ -134,7 +134,7 @@ Nuxtify.getComicsByGenre();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopDailyComics();
+Comics.getTopDailyComics();
 ```
 
 ### _Top Weekly_
@@ -143,7 +143,7 @@ Nuxtify.getTopDailyComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopWeeklyComics();
+Comics.getTopWeeklyComics();
 ```
 
 ### _Top Monthly_
@@ -152,7 +152,7 @@ Nuxtify.getTopWeeklyComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopMonthlyComics();
+Comics.getTopMonthlyComics();
 ```
 
 ### _Top Follow Comics_
@@ -161,7 +161,7 @@ Nuxtify.getTopMonthlyComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopFollowComics();
+Comics.getTopFollowComics();
 ```
 
 ### _Top Comment Comics_
@@ -170,7 +170,7 @@ Nuxtify.getTopFollowComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopCommentComics();
+Comics.getTopCommentComics();
 ```
 
 ### _Top All Comics_
@@ -179,7 +179,7 @@ Nuxtify.getTopCommentComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopAllComics();
+Comics.getTopAllComics();
 ```
 
 ### _Top Chapter Comics_
@@ -188,5 +188,5 @@ Nuxtify.getTopAllComics();
 > page: number _(option)_
 
 ```javascript
-Nuxtify.getTopChapterComics();
+Comics.getTopChapterComics();
 ```
