@@ -79,10 +79,17 @@ class ComicsApi {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
           );
+          const value = /, |;| - /.test(detail)
+            ? detail.split(/, |;| - /)
+            : detail;
+          const key = keys[label];
+          if (key === 'status') {
+            return {
+              status: value === 'Hoàn thành' ? 'Completed' : 'Updating',
+            };
+          }
           return {
-            [keys[label]]: /, |;| - /.test(detail)
-              ? detail.split(/, |;| - /)
-              : detail,
+            key: value,
           };
         });
         const lastest_chapters = Array.from($('.comic-item li', item)).map(
@@ -414,3 +421,5 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
+
+Comics.getTrending().then((data) => console.log(data));
