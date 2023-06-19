@@ -5,11 +5,11 @@ const app = express();
 
 app.get('/', async (req: any, res: any) => {
   try {
-    const { host, src } = req.query;
+    const { src } = req.query;
     const options = {
       responseType: 'stream',
       headers: {
-        referer: host,
+        referer: 'https://www.nettruyen.com',
       },
     };
     const response = await axios.get(src, options);

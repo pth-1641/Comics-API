@@ -47,7 +47,7 @@ class ComicsApi {
       'Tình trạng': 'status',
       'Lượt xem': 'total_views',
       'Bình luận': 'total_comments',
-      'Theo dõi': 'total_followers',
+      'Theo dõi': 'followers',
       'Tên khác': 'other_names',
       'Ngày cập nhật': 'updated_at',
       'Tác giả': 'author',
@@ -89,7 +89,7 @@ class ComicsApi {
             };
           }
           return {
-            key: value,
+            [key]: value,
           };
         });
         const lastest_chapters = Array.from($('.comic-item li', item)).map(
@@ -121,21 +121,18 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const [_, slug, id] = comicId.split(/(.+)-(\d+)/);
+      const [_, slug] = comicId.split(/(.+)-(\d+)/);
+      const $ = await this.createRequest(`truyen-tranh/${slug}`);
+      const id = $('.star').attr('data-id');
       const { data } = await axios.get(
-        `${
-          this.domain
-        }/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id.slice(
-          0,
-          -1
-        )}`
+        `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`
       );
-      const chapters = data.chapters.map((chapter: any) => {
+      const chapters = data.chapters?.map((chapter: any) => {
         const chapterId = chapter.name.match(/\d+/)[0];
         return {
           id: chapter.chapterId,
           name: chapter.name,
-          chapter_id: Number(chapterId),
+          chapter: Number(chapterId),
         };
       });
       return chapters;
@@ -365,6 +362,7 @@ class ComicsApi {
         const name = $(item).text();
         return { id, name };
       });
+      const is_adult = !!$('.alert-danger').toString();
       const other_names = $('.other-name')
         .text()
         .split(/, |;| - /)
@@ -387,6 +385,7 @@ class ComicsApi {
         followers,
         chapters,
         id: comicId,
+        is_adult,
         other_names: other_names[0] !== '' ? other_names : [],
       };
     } catch (err) {
@@ -406,9 +405,9 @@ class ComicsApi {
       );
       const images = Array.from($('.page-chapter img')).map((img) => {
         const page = Number($(img).attr('data-index'));
-        const src = `https://api-comics-9g0r.onrender.com?host=${
-          this.domain
-        }&src=https:${$(img).attr('src')}`;
+        const src = `https://api-comics-9g0r.onrender.com?src=https:${$(
+          img
+        ).attr('src')}`;
         return { page, src };
       });
       return images;
@@ -421,5 +420,3 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
-
-Comics.getTrending().then((data) => console.log(data));
