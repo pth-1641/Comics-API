@@ -121,7 +121,7 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const [_, slug] = comicId.split(/(.+)-(\d+)/);
+      const [_, slug] = comicId.split(/^([\w-]+)(?:-\d+)?$/);
       const $ = await this.createRequest(`truyen-tranh/${slug}`);
       const id = $('.star').attr('data-id');
       const { data } = await axios.get(
@@ -347,7 +347,7 @@ class ComicsApi {
         this.getChapters(comicId),
       ]);
       const title = $('.title-detail').text();
-      const description = $('.detail-content p').text();
+      const description = $('.detail-content p').text().replace(/\n/g, '. ');
       let author = $('.author p:nth-child(2)').text();
       author =
         author !== 'Đang cập nhật'
@@ -400,9 +400,12 @@ class ComicsApi {
   ): Promise<any> {
     try {
       const id = comicId.replace(/-\d+$/, '');
-      const $ = await this.createRequest(
-        `truyen-tranh/${id}/chapter-${chapter}/${chapterId}`
-      );
+      const [$, chapters] = await Promise.all([
+        this.createRequest(
+          `truyen-tranh/${id}/chapter-${chapter}/${chapterId}`
+        ),
+        this.getChapters(comicId),
+      ]);
       const images = Array.from($('.page-chapter img')).map((img) => {
         const page = Number($(img).attr('data-index'));
         const src = `https://api-comics-9g0r.onrender.com?src=https:${$(
@@ -410,7 +413,72 @@ class ComicsApi {
         ).attr('src')}`;
         return { page, src };
       });
-      return images;
+      return { images, chapters };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getComicsByAuthor(alias: string) {
+    try {
+      return this.getComics(`/tim-truyen?tac-gia=${alias.replace(/\s/, '+')}`);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getComments(
+    comicId: string,
+    page: number = 1,
+    sortBy: 'default' | 'newest' = 'default'
+  ) {
+    try {
+      const body = await this.createRequest(`truyen-tranh/${comicId}`);
+      const id = body('.star').attr('data-id');
+      const token = body('#ctl00_divCenter > script')
+        .text()
+        .match(/'([^']+)'/)[1];
+      const orderBy = sortBy === 'newest' ? 5 : 0;
+      const { data } = await axios.get(
+        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=${orderBy}&chapterId=-1&parentId=0&pageNumber=${page}&token=${token}`
+      );
+      if (!data.success) {
+        return {
+          status: 400,
+          message: 'Something went wrong!',
+        };
+      }
+      const total_comments = Number(data.commentCount.replace(',', ''));
+      const $ = cheerio.load(data.response);
+      const total_pages = Math.ceil(total_comments / 15);
+      if (page > total_pages) {
+        return { status: 400, message: 'Invalid page' };
+      }
+      const comments = Array.from($('.clearfix')).map((item) => {
+        const avatar = 'https:' + $('.avatar img', item).attr('src');
+        const username = $(item).find('.authorname').first().text().trim();
+        const content = $('.comment-content', item).first().text().trim();
+        const stickers = Array.from(
+          $('.comment-content > img', item).first()
+        ).map((img) => 'https:' + $(img).attr('src'));
+        const replies = Array.from($('.item', item)).map((reply) => {
+          const avatar = 'https:' + $('.avatar img', reply).attr('src');
+          const username = $('.authorname', reply).text().trim();
+          const content = $('.comment-content', reply)
+            .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
+          const stickers = Array.from($('.comment-content > img', reply)).map(
+            (img) => 'https:' + $(img).attr('src')
+          );
+          return { avatar, username, content, stickers };
+        });
+        return { avatar, username, content, stickers, replies };
+      });
+      return { comments, total_comments, total_pages };
     } catch (err) {
       throw err;
     }
