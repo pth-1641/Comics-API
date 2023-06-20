@@ -128,11 +128,9 @@ class ComicsApi {
         `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`
       );
       const chapters = data.chapters?.map((chapter: any) => {
-        const chapterId = chapter.name.match(/\d+/)[0];
         return {
           id: chapter.chapterId,
           name: chapter.name,
-          chapter: Number(chapterId),
         };
       });
       return chapters;
@@ -393,17 +391,11 @@ class ComicsApi {
     }
   }
 
-  public async getImages(
-    comicId: string,
-    chapter: number,
-    chapterId: number
-  ): Promise<any> {
+  public async getImages(comicId: string, chapterId: number): Promise<any> {
     try {
       const id = comicId.replace(/-\d+$/, '');
       const [$, chapters] = await Promise.all([
-        this.createRequest(
-          `truyen-tranh/${id}/chapter-${chapter}/${chapterId}`
-        ),
+        this.createRequest(`truyen-tranh/${id}/chapter/${chapterId}`),
         this.getChapters(comicId),
       ]);
       const images = Array.from($('.page-chapter img')).map((img) => {
@@ -461,6 +453,10 @@ class ComicsApi {
         const stickers = Array.from(
           $('.comment-content > img', item).first()
         ).map((img) => 'https:' + $(img).attr('src'));
+        const created_at = $('.comment-footer abbr', item)
+          .first()
+          .attr('title')
+          ?.replace(/( AM| PM)$/, '');
         const replies = Array.from($('.item', item)).map((reply) => {
           const avatar = 'https:' + $('.avatar img', reply).attr('src');
           const username = $('.authorname', reply).text().trim();
@@ -474,9 +470,12 @@ class ComicsApi {
           const stickers = Array.from($('.comment-content > img', reply)).map(
             (img) => 'https:' + $(img).attr('src')
           );
-          return { avatar, username, content, stickers };
+          const created_at = $('.comment-footer abbr', item)
+            .attr('title')
+            ?.replace(/( AM| PM)$/, '');
+          return { avatar, username, content, stickers, created_at };
         });
-        return { avatar, username, content, stickers, replies };
+        return { avatar, username, content, stickers, replies, created_at };
       });
       return { comments, total_comments, total_pages };
     } catch (err) {

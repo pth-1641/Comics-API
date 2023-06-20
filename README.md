@@ -58,11 +58,10 @@ Comics.getComicDetail('tham-tu-conan-46391');
 ### _Images By Chapter_
 
 > comicId: string \
-> chapter: number \
 > chapterId: number
 
 ```javascript
-Comics.getImages('tham-tu-conan-46391', 1114, 1011493);
+Comics.getImages('tham-tu-conan-46391', 1011493);
 ```
 
 ### _Genres_
