@@ -1,15 +1,25 @@
 {
   "name": "comics-api",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.2.1",
+  "description": "Vietnamese Comics API for client using scraping technique",
   "main": "index.js",
-  "scripts": {
-    "build": "npx tsc proxy.ts",
-    "start": "node proxy.js"
+  "types": "index.d.ts",
+  "repository": {
+    "url": "https://github.com/pth-1641/Comics-API",
+    "type": "git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "homepage": "https://github.com/pth-1641/Comics-API",
+  "keywords": [
+    "api",
+    "comics",
+    "comics-api",
+    "scaping"
+  ],
+  "author": {
+    "name": "pth-1641",
+    "email": "pth16042001@gmail.com"
+  },
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
