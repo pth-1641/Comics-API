@@ -434,7 +434,7 @@ class ComicsApi {
     comicId: string,
     page: number = 1,
     sortBy: 'default' | 'newest' = 'default'
-  ) {
+  ):Promise<any> {
     try {
       const body = await this.createRequest(`truyen-tranh/${comicId}`);
       const id = body('.star').attr('data-id');
@@ -443,7 +443,8 @@ class ComicsApi {
         .match(/'([^']+)'/)[1];
       const orderBy = sortBy === 'newest' ? 5 : 0;
       const { data } = await axios.get(
-        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=${orderBy}&chapterId=-1&parentId=0&pageNumber=${page}&token=${token}`
+        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=${orderBy}&chapterId=-1&parentId=0&pageNumber=${page}&token=${token}`,
+        { headers: { 'User-Agent': '*' } }
       );
       if (!data.success) {
         return {
@@ -466,8 +467,7 @@ class ComicsApi {
         ).map((img) => 'https:' + $(img).attr('src'));
         const created_at = $('.comment-footer abbr', item)
           .first()
-          .attr('title')
-          ?.replace(/( AM| PM)$/, '');
+          .attr('title');
         const replies = Array.from($('.item', item)).map((reply) => {
           const avatar = 'https:' + $('.avatar img', reply).attr('src');
           const username = $('.authorname', reply).text().trim();
