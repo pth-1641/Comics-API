@@ -498,5 +498,3 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
-
-Comics.searchComics('Thám tử conan').then((data) => console.log(data));
