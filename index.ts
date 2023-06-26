@@ -14,6 +14,9 @@ class ComicsApi {
       const { data } = await axios.request({
         method: 'GET',
         url: `${this.domain}/${path}`,
+        headers: {
+          'User-Agent': '*',
+        },
       });
       return cheerio.load(data);
     } catch (err) {
@@ -125,7 +128,12 @@ class ComicsApi {
       const $ = await this.createRequest(`truyen-tranh/${slug}`);
       const id = $('.star').attr('data-id');
       const { data } = await axios.get(
-        `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`
+        `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
+        {
+          headers: {
+            'User-Agent': '*',
+          },
+        }
       );
       const chapters = data.chapters?.map((chapter: any) => {
         return {
@@ -332,7 +340,10 @@ class ComicsApi {
 
   public async searchComics(query: string, page: number = 1): Promise<any> {
     try {
-      return await this.getComics(`tim-truyen?keyword=${query}&`, page);
+      return await this.getComics(
+        `tim-truyen?keyword=${query.replace(/\s+/g, '+')}&`,
+        page
+      );
     } catch (err) {
       throw err;
     }
@@ -487,3 +498,5 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
+
+Comics.searchComics('Thám tử conan').then((data) => console.log(data));

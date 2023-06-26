@@ -32,7 +32,7 @@ Comics.getChapters('tham-tu-conan-46391');
 
 > chapter: string \
 > page: number _(option)_ \
-> sortBy: default | newest _(option)_ \
+> sortBy: default | newest _(option)_
 
 ```javascript
 Comics.getComments('tham-tu-conan-46391');
