@@ -170,4 +170,12 @@ topComicsApiPaths.forEach(({ path, callback }) => {
   });
 });
 
+// Handle 404
+app.use((req, res, next) => {
+  res.json({
+    status: 404,
+    message: 'Not Found',
+  });
+});
+
 app.listen(PORT);
