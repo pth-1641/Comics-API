@@ -4,6 +4,8 @@ Vietnamese Comics API for client using scraping technique
 
 ## ⚠️ Unofficial API from [Nettruyen](https://nettruyen.com)
 
+## ⚡ Using for client [here](https://github.com/pth-1641/Comics-API/blob/master/api/README.md)
+
 ## Installation
 
 ```bash

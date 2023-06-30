@@ -13,7 +13,7 @@ class ComicsApi {
     try {
       const { data } = await axios.request({
         method: 'GET',
-        url: `${this.domain}/${path}`,
+        url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
           'User-Agent': '*',
         },
@@ -60,16 +60,22 @@ class ComicsApi {
       updating: 1,
       completed: 2,
     };
+    if (!status[statusKey]) throw Error('Invalid status');
     try {
-      const $ = await this.createRequest(
-        path.includes('tim-truyen')
-          ? `${path}&status=${status[statusKey]}&page=${page}`
-          : `${path}?page=${page}`
-      );
+      const [$, allGenres] = await Promise.all([
+        this.createRequest(
+          path.includes('tim-truyen')
+            ? `${path}&status=${status[statusKey]}&page=${page}`
+            : `${path + (path.includes('?') ? '&' : '?')}page=${page}`
+        ),
+        this.getGenres(),
+      ]);
       const total_pages =
-        $('a[title="Trang cuối"]')?.attr('href')?.split('=').at(-1) ?? 1;
+        $('a[title="Trang cuối"]')?.attr('href')?.split('=').at(-1) ||
+        $('#ctl00_mainContent_ctl00_divPager li.active a').text() ||
+        1;
       if (page > Number(total_pages)) {
-        return { status: 400, message: 'Invalid page' };
+        return { status: 404, message: 'Page not found' };
       }
       const comics = Array.from($('#ctl00_divCenter .item')).map((item) => {
         const thumbnail =
@@ -86,6 +92,13 @@ class ComicsApi {
             ? detail.split(/, |;| - /)
             : detail;
           const key = keys[label];
+          if (key === 'genres') {
+            const genres = value.map((genre: string) => {
+              const foundGenre = allGenres.find((g: any) => g.title === genre);
+              return { id: foundGenre?.id, title: foundGenre?.title };
+            });
+            return { genres };
+          }
           if (key === 'status') {
             return {
               status: value === 'Hoàn thành' ? 'Completed' : 'Updating',
@@ -155,10 +168,18 @@ class ComicsApi {
           const id = this.getChapterId($(item).attr('href'));
           const title = this.trim($(item).text());
           const description = $(item).attr('data-title');
-          return { id, title, description };
+          return { id: id === 'tim-truyen' ? 'all' : id, title, description };
         }
       );
-      return genres;
+      return [
+        ...genres,
+        {
+          id: '16',
+          title: '16+',
+          description:
+            'Là thể loại có nhiều cảnh nóng, đề cập đến các vấn đề nhạy cảm giới tính hay các cảnh bạo lực máu me .... Nói chung là truyện có tác động xấu đến tâm sinh lý của những độc giả chưa đủ 16 tuổi',
+        },
+      ];
     } catch (err) {
       throw err;
     }
@@ -180,9 +201,6 @@ class ComicsApi {
       const id = Number(
         $('.slide-caption > a', item).attr('href').split('/').at(-1)
       );
-      const chapter_id = this.getChapterName(
-        $('.slide-caption > a', item).text()
-      );
       const name = $('.slide-caption > a', item).text();
       return {
         title,
@@ -190,7 +208,6 @@ class ComicsApi {
         updated_at,
         lastest_chapter: {
           id,
-          chapter_id,
           name,
         },
       };
@@ -198,7 +215,7 @@ class ComicsApi {
     return comics;
   }
 
-  public async getNewUpdateComics(page: number = 1): Promise<any> {
+  public async getRecentUpdateComics(page: number = 1): Promise<any> {
     try {
       return await this.getComics('', page);
     } catch (err) {
@@ -231,7 +248,8 @@ class ComicsApi {
     status: Status = 'all'
   ): Promise<any> {
     try {
-      return await this.getComics(`tim-truyen/${genreId}?`, page, status);
+      const path = genreId === 'all' ? 'tim-truyen?' : `tim-truyen/${genreId}?`;
+      return await this.getComics(path, page, status);
     } catch (err) {
       throw err;
     }
@@ -424,7 +442,7 @@ class ComicsApi {
 
   public async getComicsByAuthor(alias: string) {
     try {
-      return this.getComics(`/tim-truyen?tac-gia=${alias.replace(/\s/, '+')}`);
+      return this.getComics(`/tim-truyen?tac-gia=${alias.replace(/\s+/, '+')}`);
     } catch (err) {
       throw err;
     }
@@ -434,7 +452,7 @@ class ComicsApi {
     comicId: string,
     page: number = 1,
     sortBy: 'default' | 'newest' = 'default'
-  ):Promise<any> {
+  ): Promise<any> {
     try {
       const body = await this.createRequest(`truyen-tranh/${comicId}`);
       const id = body('.star').attr('data-id');
