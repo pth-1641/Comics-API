@@ -171,21 +171,11 @@ topComicsApiPaths.forEach(({ path, callback }) => {
 });
 
 app.get('/', (req, res) => {
-  res.send(`<body style="width: 100vw; height: 100vh; display: flex;
-  align-items: center; justify-content: center; flex-direction: column; font-family: sans-serif; overflow: hidden">
-    <div style="display: flex">
-      <strong>NPM: </strong>
-      <a style="color: #10b981; margin-left: 8px" href="https://www.npmjs.com/package/comics-api">https://www.npmjs.com/package/comics-api</a>
-    </div>
-    <div style="display: flex; margin: 10px 0">
-      <strong>Github: </strong>
-      <a style="color: #10b981; margin-left: 8px" href="https://github.com/pth-1641/Comics-API">https://github.com/pth-1641/Comics-API</a>
-    </div>
-    <div style="display: flex">
-      <strong>Client: </strong>
-      <a style="color: #10b981; margin-left: 8px" href="https://github.com/pth-1641/Comics-API/tree/master/api">https://github.com/pth-1641/Comics-API/tree/master/api</a>
-    </div>
-  </body>`);
+  res.json({
+    NPM: 'https://www.npmjs.com/package/comics-api',
+    Github: 'https://github.com/pth-1641/Comics-API',
+    Client: 'https://github.com/pth-1641/Comics-API/tree/master/api',
+  });
 });
 
 // Handle 404
