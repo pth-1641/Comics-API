@@ -21,7 +21,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon api/index.ts"
+    "dev": "nodemon api/index.ts",
+    "vercel-build": "echo pth-1641"
   },
   "dependencies": {
     "axios": "^1.4.0",
