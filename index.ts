@@ -88,8 +88,8 @@ class ComicsApi {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
           );
-          const value = /, |;| - /.test(detail)
-            ? detail.split(/, |;| - /)
+          const value = /, |;\s*| - /.test(detail)
+            ? detail.split(/, |;\s*| - /)
             : detail;
           const key = keys[label];
           if (key === 'genres') {
@@ -120,14 +120,26 @@ class ComicsApi {
             };
           }
         );
-        return Object.assign({}, ...cols, {
-          thumbnail,
-          title,
-          id,
-          is_trending,
-          short_description,
-          lastest_chapters,
-        });
+        return Object.assign(
+          {},
+          {
+            thumbnail,
+            title,
+            id,
+            is_trending,
+            short_description,
+            lastest_chapters,
+            genres: [],
+            other_names: [],
+            status: 'Updating',
+            total_views: 'Updating',
+            total_comments: 'Updating',
+            followers: 'Updating',
+            updated_at: 'Updating',
+            author: 'Updating',
+          },
+          ...cols
+        );
       });
       return { comics, total_pages: Number(total_pages), current_page: page };
     } catch (err) {
