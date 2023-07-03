@@ -1,11 +1,10 @@
 import express from 'express';
-import cors from 'cors';
 import { Comics } from '..';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
+app.use(require('cors')());
 
 const allStatus = ['all', 'completed', 'updating'];
 const allOrder = ['default', 'newest'];
