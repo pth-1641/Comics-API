@@ -1,6 +1,6 @@
 {
   "name": "comics-api",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Vietnamese Comics API for Node using scraping technique",
   "main": "index.js",
   "types": "index.d.ts",
@@ -27,6 +27,7 @@
   "dependencies": {
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
     "express": "^4.18.2"
   },
   "devDependencies": {
