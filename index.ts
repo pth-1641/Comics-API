@@ -175,14 +175,12 @@ class ComicsApi {
   public async getGenres(): Promise<any> {
     try {
       const $ = await this.createRequest('');
-      const genres = Array.from($('.dropdown-menu .clearfix li a')).map(
-        (item) => {
-          const id = this.getChapterId($(item).attr('href'));
-          const title = this.trim($(item).text());
-          const description = $(item).attr('data-title');
-          return { id: id === 'tim-truyen' ? 'all' : id, title, description };
-        }
-      );
+      const genres = Array.from($('#mainNav .clearfix li a')).map((item) => {
+        const id = this.getChapterId($(item).attr('href'));
+        const title = this.trim($(item).text());
+        const description = $(item).attr('data-title');
+        return { id: id === 'tim-truyen' ? 'all' : id, title, description };
+      });
       return [
         ...genres,
         {
