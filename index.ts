@@ -386,7 +386,10 @@ class ComicsApi {
       ]);
       const title = $('.title-detail').text();
       const thumbnail = 'https:' + $('#item-detail .col-image img').attr('src');
-      const description = $('.detail-content p').text().replace(/\n/g, '. ');
+      const description = $('.detail-content p')
+        .text()
+        .replace(/\n/g, ' ')
+        .trim();
       let author = $('.author p:nth-child(2)').text();
       author =
         author !== 'Đang cập nhật'
