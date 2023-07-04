@@ -93,7 +93,8 @@ class ComicsApi {
             : detail;
           const key = keys[label];
           if (key === 'genres') {
-            const genres = value.map((genre: string) => {
+            const genresList = Array.isArray(value) ? value : [value];
+            const genres = genresList.map((genre: string) => {
               const foundGenre = allGenres.find((g: any) => g.title === genre);
               return { id: foundGenre?.id, title: foundGenre?.title };
             });
