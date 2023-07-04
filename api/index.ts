@@ -20,7 +20,7 @@ app.get('/genres/:slug', async (req, res) => {
   const page = query.page ? Number(query.page) : 1;
   const status = query.status ? query.status : 'all';
   //@ts-ignore
-  if (status.includes(allStatus)) throw Error('Invalid status');
+  if (!allStatus.includes(status)) throw Error('Invalid status');
   //@ts-ignore
   res.send(await Comics.getComicsByGenre(slug, page, status));
 });
@@ -31,7 +31,7 @@ app.get(`/new-comics`, async (req, res) => {
   const status = query.status ? query.status : 'all';
   const page = query.page ? Number(query.page) : 1;
   //@ts-ignore
-  if (status.includes(allStatus)) throw Error('Invalid status');
+  if (!allStatus.includes(status)) throw Error('Invalid status');
   // @ts-ignore
   res.json(await Comics.getNewComics(status, page));
 });
@@ -125,7 +125,7 @@ app.get('/comics/:slug/comments', async (req, res) => {
   const page = query.page ? Number(query.page) : 1;
   const sortBy = query.sortBy ? query.sortBy : 'default';
   // @ts-ignore
-  if (!sortBy.includes(allOrder)) throw Error('Invalid status');
+  if (!allOrder.includes(sortBy)) throw Error('Invalid status');
   if (!slug) throw Error('Invalid Comic ID');
   res.json(await Comics.getComments(slug, page));
 });
