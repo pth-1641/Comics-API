@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 8080;
 app.use(require('cors')());
 
 const allStatus = ['all', 'completed', 'updating'];
-const allOrder = ['default', 'newest'];
 
 // Genres
 app.get('/genres', async (req, res) => {
@@ -45,13 +44,26 @@ app.get(`/recommend-comics`, async (req, res) => {
 });
 
 // Search
-app.get('/search', async (req, res) => {
-  const { query } = req;
-  const q = query.q ? query.q : '';
-  if (!q) throw Error('Invalid query');
-  const page = query.page ? Number(query.page) : 1;
-  //@ts-ignore
-  res.send(await Comics.searchComics(q, page));
+const searchApiPaths = [
+  {
+    path: '/search',
+    callback: (q: string, page: number) => Comics.searchComics(q, page),
+  },
+  {
+    path: '/search-suggest',
+    callback: (q: string) => Comics.getSearchSuggest(q),
+  },
+];
+
+searchApiPaths.forEach(({ path, callback }) => {
+  app.get(path, async (req, res) => {
+    const { query } = req;
+    const q = query.q ? query.q : '';
+    if (!q) throw Error('Invalid query');
+    const page = query.page ? Number(query.page) : 1;
+    //@ts-ignore
+    res.send(await callback(q, page));
+  });
 });
 
 // Page params
@@ -73,8 +85,8 @@ const pageParamsApiPaths = [
     callback: (...params: any) => Comics.getRecentUpdateComics(...params),
   },
   {
-    path: '/trending',
-    callback: (...params: any) => Comics.getTrending(...params),
+    path: '/trending-comics',
+    callback: (...params: any) => Comics.getTrendingComics(...params),
   },
 ];
 
@@ -111,23 +123,22 @@ comicIdParamsApiPaths.forEach(({ path, callback }) => {
   });
 });
 
-app.get('/comics/:slug/images', async (req, res) => {
-  const { params, query } = req;
+app.get('/comics/:slug/images/:chapter_id', async (req, res) => {
+  const { params } = req;
   const slug = params.slug;
-  const chapter_id = query.chapter_id ? Number(query.chapter_id) : null;
+  const chapter_id = params.chapter_id ? Number(params.chapter_id) : null;
   if (!slug || !chapter_id) throw Error('Invalid');
-  res.json(await Comics.getImages(slug, chapter_id));
+  res.json(await Comics.getChapter(slug, chapter_id));
 });
 
 app.get('/comics/:slug/comments', async (req, res) => {
   const { params, query } = req;
   const slug = params.slug;
   const page = query.page ? Number(query.page) : 1;
-  const sortBy = query.sortBy ? query.sortBy : 'default';
+  const chapter = query.chapter ? Number(query.chapter) : -1;
   // @ts-ignore
-  if (!allOrder.includes(sortBy)) throw Error('Invalid status');
   if (!slug) throw Error('Invalid Comic ID');
-  res.json(await Comics.getComments(slug, page));
+  res.json(await Comics.getComments(slug, page, chapter));
 });
 
 // Top Comics

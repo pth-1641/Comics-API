@@ -24,16 +24,12 @@ class ComicsApi {
     }
   }
 
-  private getChapterId(link: string | null | undefined): string | undefined {
-    return link?.match(/[^/]+$/)?.[0];
-  }
-
-  private getChapterName(chapterName: string | undefined | null): number {
-    return Number(chapterName?.match(/(\d+(\.\d+)?)/)?.[1]);
+  private getComicId(link: string | null | undefined): string | undefined {
+    return link?.match(/\/([^/]+)-\d+$/)?.[1];
   }
 
   private formatTotal(total: string | undefined | null): number | string {
-    return total === 'N/A' ? 'Updating' : Number(total?.replace(/\./, ''));
+    return total === 'N/A' ? 'Updating' : Number(total?.replace(/\./g, ''));
   }
 
   private trim(text: string | null | undefined): string | undefined {
@@ -53,7 +49,7 @@ class ComicsApi {
       'Theo dõi': 'followers',
       'Tên khác': 'other_names',
       'Ngày cập nhật': 'updated_at',
-      'Tác giả': 'author',
+      'Tác giả': 'authors',
     };
     const status: any = {
       all: -1,
@@ -81,7 +77,7 @@ class ComicsApi {
         const thumbnail =
           'https:' + $('.image img', item).attr('data-original');
         const title = this.trim($('figcaption h3', item).text());
-        const id = this.getChapterId($('a', item).attr('href'));
+        const id = this.getComicId($('a', item).attr('href'));
         const is_trending = !!$('.icon-hot', item).toString();
         const short_description = $('.box_text', item).text();
         const cols = Array.from($('.message_main p', item)).map((col) => {
@@ -112,11 +108,11 @@ class ComicsApi {
         const lastest_chapters = Array.from($('.comic-item li', item)).map(
           (chap) => {
             const id = Number($('a', chap).attr('data-id'));
-            const chapter = this.getChapterName($('a', chap).text());
+            const name = $('a', chap).text();
             const updated_at = $('.time', chap).text();
             return {
               id,
-              chapter,
+              name,
               updated_at,
             };
           }
@@ -137,7 +133,7 @@ class ComicsApi {
             total_comments: 'Updating',
             followers: 'Updating',
             updated_at: 'Updating',
-            author: 'Updating',
+            authors: 'Updating',
           },
           ...cols
         );
@@ -177,7 +173,7 @@ class ComicsApi {
     try {
       const $ = await this.createRequest('');
       const genres = Array.from($('#mainNav .clearfix li a')).map((item) => {
-        const id = this.getChapterId($(item).attr('href'));
+        const id = this.getComicId($(item).attr('href'));
         const title = this.trim($(item).text());
         const description = $(item).attr('data-title');
         return { id: id === 'tim-truyen' ? 'all' : id, title, description };
@@ -343,7 +339,7 @@ class ComicsApi {
     }
   }
 
-  public async getTrending(page: number = 1): Promise<any> {
+  public async getTrendingComics(page: number = 1): Promise<any> {
     try {
       return await this.getComics('hot?', page);
     } catch (err) {
@@ -390,9 +386,9 @@ class ComicsApi {
         .text()
         .replace(/\n/g, ' ')
         .trim();
-      let author = $('.author p:nth-child(2)').text();
-      author =
-        author !== 'Đang cập nhật'
+      let authors = $('.author p:nth-child(2)').text();
+      authors =
+        authors !== 'Đang cập nhật'
           ? $('.author p:nth-child(2)').text()
           : 'Updating';
       const status =
@@ -400,7 +396,7 @@ class ComicsApi {
           ? 'Finished'
           : 'Updating';
       const genres = Array.from($('.kind p:nth-child(2) a')).map((item) => {
-        const id = this.getChapterId($(item).attr('href'));
+        const id = this.getComicId($(item).attr('href'));
         const name = $(item).text();
         return { id, name };
       });
@@ -410,7 +406,7 @@ class ComicsApi {
         .split(/, |;| - /)
         .map((x: string) => x.trim());
       const total_views = this.formatTotal(
-        $('.list-info .row:last-child p:nth-child(2)').text()?.replace(/\./, '')
+        $('.list-info .row:last-child p:nth-child(2)').text()
       );
       const rating_count = Number($('span[itemprop="ratingCount"]').text());
       const average = Number($('span[itemprop="ratingValue"]').text());
@@ -419,7 +415,7 @@ class ComicsApi {
         title,
         thumbnail,
         description,
-        author,
+        authors,
         status,
         genres,
         total_views,
@@ -436,7 +432,7 @@ class ComicsApi {
     }
   }
 
-  public async getImages(comicId: string, chapterId: number): Promise<any> {
+  public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
       const id = comicId.replace(/-\d+$/, '');
       const [$, chapters] = await Promise.all([
@@ -450,7 +446,9 @@ class ComicsApi {
         ).attr('src')}`;
         return { page, src };
       });
-      return { images, chapters };
+      const chapter_name = $('.breadcrumb li:last-child').first().text();
+      const comic_name = $('.breadcrumb li:nth-last-child(2)').first().text();
+      return { images, chapters, chapter_name, comic_name };
     } catch (err) {
       throw err;
     }
@@ -467,17 +465,18 @@ class ComicsApi {
   public async getComments(
     comicId: string,
     page: number = 1,
-    sortBy: 'default' | 'newest' = 'default'
+    chapterId: number = -1
   ): Promise<any> {
     try {
       const body = await this.createRequest(`truyen-tranh/${comicId}`);
-      const id = body('.star').attr('data-id');
+      const id = body('head meta[property="og:image"]')
+        .attr('content')
+        .match(/\/(\d+)\./)[1];
       const token = body('#ctl00_divCenter > script')
         .text()
         .match(/'([^']+)'/)[1];
-      const orderBy = sortBy === 'newest' ? 5 : 0;
       const { data } = await axios.get(
-        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=${orderBy}&chapterId=-1&parentId=0&pageNumber=${page}&token=${token}`,
+        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=0&chapterId=${chapterId}&parentId=0&pageNumber=${page}&token=${token}`,
         { headers: { 'User-Agent': '*' } }
       );
       if (!data.success) {
@@ -544,6 +543,39 @@ class ComicsApi {
         };
       });
       return { comments, total_comments, total_pages };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getSearchSuggest(query: string): Promise<any> {
+    try {
+      query = query.trim();
+      if (!query) throw Error('Invalid query');
+      const { data } = await axios.get(
+        `${this.domain}/Comic/Services/SuggestSearch.ashx?q=${query}`,
+        { headers: { 'User-Agent': '*' } }
+      );
+      const $ = cheerio.load(data);
+      const suggestions = Array.from($('li')).map((comic) => {
+        const id = this.getComicId($('a', comic).attr('href'));
+        const thumbnail = 'https:' + $('img', comic).attr('src');
+        const title = $('h3', comic).text();
+        const lastest_chapter = $('i', comic).first().text();
+        const genres = $('i', comic).last().text();
+        const authors = $('b', comic).text() || 'Updating';
+        return {
+          id,
+          title,
+          thumbnail,
+          lastest_chapter: lastest_chapter.startsWith('Chapter')
+            ? lastest_chapter
+            : 'Updating',
+          genres: genres !== lastest_chapter ? genres.split(', ') : 'Updating',
+          authors: authors === 'Updating' ? authors : authors.split(' - '),
+        };
+      });
+      return suggestions;
     } catch (err) {
       throw err;
     }

@@ -6,7 +6,7 @@ Vietnamese Comics API for client using scraping technique
 
 ## ⚡ Using for client [here](https://github.com/pth-1641/Comics-API/blob/master/api/README.md)
 
-## Installation
+## **I. Installation**
 
 ```bash
 npm i comics-api
@@ -20,27 +20,27 @@ import { Comics } from "comics-api"
 const { Comics } = require("comics-api")
 ```
 
-## Usage
+## **II. Usage**
 
-### _Chapters_
+### **Chapters**
 
 > comicId: string
 
 ```javascript
-Comics.getChapters('tham-tu-conan-46391');
+Comics.getChapters('tham-tu-conan');
 ```
 
-### _Comments_
+### **Comments**
 
 > chapter: string \
 > page: number _(option)_ \
 > sortBy: default | newest _(option)_
 
 ```javascript
-Comics.getComments('tham-tu-conan-46391');
+Comics.getComments('tham-tu-conan');
 ```
 
-### _Search Comics_
+### **Search Comics**
 
 > query: string \
 > page: number _(option)_
@@ -49,30 +49,38 @@ Comics.getComments('tham-tu-conan-46391');
 Comics.searchComics('conan');
 ```
 
-### _Comic Detail_
+### **Search Suggestion**
+
+> query: string
+
+```javascript
+Comics.getSearchSuggest('conan');
+```
+
+### **Comic Detail**
 
 > comicId: string
 
 ```javascript
-Comics.getComicDetail('tham-tu-conan-46391');
+Comics.getComicDetail('tham-tu-conan');
 ```
 
-### _Images By Chapter_
+### **Single Chapter**
 
 > comicId: string \
 > chapterId: number
 
 ```javascript
-Comics.getImages('tham-tu-conan-46391', 1011493);
+Comics.getChapter('tham-tu-conan', 1011493);
 ```
 
-### _Genres_
+### **Genres**
 
 ```javascript
 Comics.getGenres();
 ```
 
-### _Trending Comics_
+### **Trending Comics**
 
 > page: number _(option)_
 
@@ -80,7 +88,7 @@ Comics.getGenres();
 Comics.getTrending();
 ```
 
-### _Recommend Comics_
+### **Recommend Comics**
 
 > type: hot | boy | girl _(option)_
 
@@ -88,7 +96,7 @@ Comics.getTrending();
 Comics.getRecommendComics();
 ```
 
-### _New Update Comics_
+### **New Update Comics**
 
 > page: number _(option)_
 
@@ -96,7 +104,7 @@ Comics.getRecommendComics();
 Comics.getNewUpdateComics();
 ```
 
-### _Completed Comics_
+### **Completed Comics**
 
 > page: number _(option)_
 
@@ -104,7 +112,7 @@ Comics.getNewUpdateComics();
 Comics.getCompletedComics();
 ```
 
-### _Boy Comics_
+### **Boy Comics**
 
 > page: number _(option)_
 
@@ -112,7 +120,7 @@ Comics.getCompletedComics();
 Comics.getBoyComics();
 ```
 
-### _Girl Comics_
+### **Girl Comics**
 
 > page: number _(option)_
 
@@ -120,7 +128,7 @@ Comics.getBoyComics();
 Comics.getGirlComics();
 ```
 
-### _New Comics_
+### **New Comics**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -129,7 +137,7 @@ Comics.getGirlComics();
 Comics.getNewComics();
 ```
 
-### _Comics By Genre_
+### **Comics By Genre**
 
 > genreId: string \
 > page: number _(option)_ \
@@ -139,7 +147,7 @@ Comics.getNewComics();
 Comics.getComicsByGenre();
 ```
 
-### _Top Daily_
+### **Top Daily**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -148,7 +156,7 @@ Comics.getComicsByGenre();
 Comics.getTopDailyComics();
 ```
 
-### _Top Weekly_
+### **Top Weekly**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -157,7 +165,7 @@ Comics.getTopDailyComics();
 Comics.getTopWeeklyComics();
 ```
 
-### _Top Monthly_
+### **Top Monthly**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -166,7 +174,7 @@ Comics.getTopWeeklyComics();
 Comics.getTopMonthlyComics();
 ```
 
-### _Top Follow Comics_
+### **Top Follow Comics**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -175,7 +183,7 @@ Comics.getTopMonthlyComics();
 Comics.getTopFollowComics();
 ```
 
-### _Top Comment Comics_
+### **Top Comment Comics**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -184,7 +192,7 @@ Comics.getTopFollowComics();
 Comics.getTopCommentComics();
 ```
 
-### _Top All Comics_
+### **Top All Comics**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_
@@ -193,7 +201,7 @@ Comics.getTopCommentComics();
 Comics.getTopAllComics();
 ```
 
-### _Top Chapter Comics_
+### **Top Chapter Comics**
 
 > status: all | finished | updating _(option)_ \
 > page: number _(option)_

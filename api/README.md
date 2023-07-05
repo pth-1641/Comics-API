@@ -31,6 +31,12 @@ _Path_: /genres/{genre_id}
 
 _Path_: /search?q={query}&page={page}
 
+### **Search Suggest**
+
+> query: string
+
+_Path_: /search-suggest?q={query}
+
 ### **Recommend Comics**
 
 > type: hot | boy | girl _(option)_
@@ -86,12 +92,12 @@ _Path_: /comics/{comic_id}/chapters
 
 _Path_: /comics/authors/{author_name}
 
-### **Chapter Images**
+### **Single Chapter**
 
 > comic_id: string \
 > chapter_id: number
 
-_Path_: /comics/{comic_id}/images?chapter_id={chapter_id}
+_Path_: /comics/{comic_id}/images/{chapter_id}
 
 ### **Comic Comments**
 
