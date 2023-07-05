@@ -496,6 +496,10 @@ class ComicsApi {
         const avatar = 'https:' + $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
         const content = $('.comment-content', item).first().text().trim();
+        const vote_count = $('.comment-footer .vote-up-count', item)
+          .first()
+          .text()
+          .trim();
         const stickers = Array.from(
           $('.comment-content > img', item).first()
         ).map((img) => 'https:' + $(img).attr('src'));
@@ -512,15 +516,32 @@ class ComicsApi {
             .end()
             .text()
             .trim();
+          const vote_count = $('.comment-footer .vote-up-count', reply)
+            .first()
+            .text()
+            .trim();
           const stickers = Array.from($('.comment-content > img', reply)).map(
             (img) => 'https:' + $(img).attr('src')
           );
-          const created_at = $('.comment-footer abbr', item)
-            .attr('title')
-            ?.replace(/( AM| PM)$/, '');
-          return { avatar, username, content, stickers, created_at };
+          const created_at = $('.comment-footer abbr', reply).attr('title');
+          return {
+            avatar,
+            username,
+            content,
+            stickers,
+            created_at,
+            vote_count: parseInt(vote_count),
+          };
         });
-        return { avatar, username, content, stickers, replies, created_at };
+        return {
+          avatar,
+          username,
+          content,
+          stickers,
+          replies,
+          created_at,
+          vote_count: parseInt(vote_count),
+        };
       });
       return { comments, total_comments, total_pages };
     } catch (err) {
