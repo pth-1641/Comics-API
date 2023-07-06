@@ -28,6 +28,10 @@ class ComicsApi {
     return link?.match(/\/([^/]+)-\d+$/)?.[1];
   }
 
+  private getGenreId(link: string | null | undefined): string | undefined {
+    return link?.match(/[^/]+$/)?.[0];
+  }
+
   private formatTotal(total: string | undefined | null): number | string {
     return total === 'N/A' ? 'Updating' : Number(total?.replace(/\./g, ''));
   }
@@ -173,7 +177,7 @@ class ComicsApi {
     try {
       const $ = await this.createRequest('');
       const genres = Array.from($('#mainNav .clearfix li a')).map((item) => {
-        const id = this.getComicId($(item).attr('href'));
+        const id = this.getGenreId($(item).attr('href'));
         const title = this.trim($(item).text());
         const description = $(item).attr('data-title');
         return { id: id === 'tim-truyen' ? 'all' : id, title, description };
@@ -396,7 +400,7 @@ class ComicsApi {
           ? 'Finished'
           : 'Updating';
       const genres = Array.from($('.kind p:nth-child(2) a')).map((item) => {
-        const id = this.getComicId($(item).attr('href'));
+        const id = this.getGenreId($(item).attr('href'));
         const name = $(item).text();
         return { id, name };
       });
