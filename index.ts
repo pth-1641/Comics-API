@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio';
+import { load } from 'cheerio';
 import axios from 'axios';
 
 type Status = 'all' | 'completed' | 'updating';
@@ -18,25 +18,28 @@ class ComicsApi {
           'User-Agent': '*',
         },
       });
-      return cheerio.load(data);
+      return load(data);
     } catch (err) {
       throw err;
     }
   }
 
-  private getComicId(link: string | null | undefined): string | undefined {
+  private getComicId(link?: string): string | undefined {
+    if (!link) return '';
     return link?.match(/\/([^/]+)-\d+$/)?.[1];
   }
 
-  private getGenreId(link: string | null | undefined): string | undefined {
+  private getGenreId(link: string): string | undefined {
+    if (!link) return '';
     return link?.match(/[^/]+$/)?.[0];
   }
 
-  private formatTotal(total: string | undefined | null): number | string {
+  private formatTotal(total: string): number | string {
+    if (!total) return 0;
     return total === 'N/A' ? 'Updating' : Number(total?.replace(/\./g, ''));
   }
 
-  private trim(text: string | null | undefined): string | undefined {
+  private trim(text: string): string | undefined {
     return text?.replace(/\n/g, '').trim();
   }
 
@@ -206,19 +209,21 @@ class ComicsApi {
     };
     const $ = await this.createRequest(keys[type]);
     const comics = Array.from($('#ctl00_divAlt1 div.item')).map((item) => {
+      const id = this.getComicId($('a', item).attr('href'));
       const title = $('a', item).attr('title');
       const thumbnail = 'https:' + $('img', item).attr('data-src');
       const updated_at = this.trim($('.time', item).text());
-      const id = Number(
+      const chapter_id = Number(
         $('.slide-caption > a', item).attr('href').split('/').at(-1)
       );
       const name = $('.slide-caption > a', item).text();
       return {
+        id,
         title,
         thumbnail,
         updated_at,
         lastest_chapter: {
-          id,
+          id: chapter_id,
           name,
         },
       };
@@ -388,7 +393,8 @@ class ComicsApi {
       const thumbnail = 'https:' + $('#item-detail .col-image img').attr('src');
       const description = $('.detail-content p')
         .text()
-        .replace(/\n/g, ' ')
+        .replace(/\n|-/g, ' ')
+        .replace(/-/, '')
         .trim();
       let authors = $('.author p:nth-child(2)').text();
       authors =
@@ -438,6 +444,7 @@ class ComicsApi {
 
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
+      let idx = 0;
       const id = comicId.replace(/-\d+$/, '');
       const [$, chapters] = await Promise.all([
         this.createRequest(`truyen-tranh/${id}/chapter/${chapterId}`),
@@ -490,7 +497,7 @@ class ComicsApi {
         };
       }
       const total_comments = Number(data.commentCount.replace(',', ''));
-      const $ = cheerio.load(data.response);
+      const $ = load(data.response);
       const total_pages = Math.ceil(total_comments / 15);
       if (page > total_pages) {
         return { status: 400, message: 'Invalid page' };
@@ -560,7 +567,7 @@ class ComicsApi {
         `${this.domain}/Comic/Services/SuggestSearch.ashx?q=${query}`,
         { headers: { 'User-Agent': '*' } }
       );
-      const $ = cheerio.load(data);
+      const $ = load(data);
       const suggestions = Array.from($('li')).map((comic) => {
         const id = this.getComicId($('a', comic).attr('href'));
         const thumbnail = 'https:' + $('img', comic).attr('src');
