@@ -72,7 +72,7 @@ class ComicsApi {
       ]);
       const total_pages =
         $('a[title="Trang cuối"]')?.attr('href')?.split('=').at(-1) ||
-        $('#ctl00_mainContent_ctl00_divPager li.active a').text() ||
+        $('.pagination-outter li.active a').text() ||
         1;
       if (page > Number(total_pages)) {
         return { status: 404, message: 'Page not found' };
