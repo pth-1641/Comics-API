@@ -444,7 +444,6 @@ class ComicsApi {
 
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
-      let idx = 0;
       const id = comicId.replace(/-\d+$/, '');
       const [$, chapters] = await Promise.all([
         this.createRequest(`truyen-tranh/${id}/chapter/${chapterId}`),
@@ -508,8 +507,7 @@ class ComicsApi {
         const content = $('.comment-content', item).first().text().trim();
         const vote_count = $('.comment-footer .vote-up-count', item)
           .first()
-          .text()
-          .trim();
+          .text();
         const stickers = Array.from(
           $('.comment-content > img', item).first()
         ).map((img) => 'https:' + $(img).attr('src'));
@@ -526,14 +524,12 @@ class ComicsApi {
             .end()
             .text()
             .trim();
-          const vote_count = $('.comment-footer .vote-up-count', reply)
-            .first()
-            .text()
-            .trim();
+          const vote_count = $('.comment-footer .vote-up-count', reply).text();
           const stickers = Array.from($('.comment-content > img', reply)).map(
             (img) => 'https:' + $(img).attr('src')
           );
           const created_at = $('.comment-footer abbr', reply).attr('title');
+          const mention_user = $('.mention-user', reply).text().trim();
           return {
             avatar,
             username,
@@ -541,6 +537,7 @@ class ComicsApi {
             stickers,
             created_at,
             vote_count: parseInt(vote_count),
+            mention_user,
           };
         });
         return {
@@ -553,7 +550,7 @@ class ComicsApi {
           vote_count: parseInt(vote_count),
         };
       });
-      return { comments, total_comments, total_pages };
+      return { comments, total_comments, total_pages, current_page: page };
     } catch (err) {
       throw err;
     }

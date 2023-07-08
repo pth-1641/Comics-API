@@ -101,11 +101,11 @@ _Path_: /comics/{comic_id}/images/{chapter_id}
 
 ### **Comic Comments**
 
-> comic*id: string \
-> page: number \*(option)* \
-> sortBy: default | newest \_(option)\_
+> comic_id: string \
+> page: number _(option)_ \
+> chapter_id: number _(option)_
 
-_Path_: /comics/{comic_id}/comments?page={page}&sortBy={sortBy}
+_Path_: /comics/{comic_id}/comments?page={page}&chapter={chapter_id}
 
 ### **Top**
 
