@@ -123,7 +123,7 @@ comicIdParamsApiPaths.forEach(({ path, callback }) => {
   });
 });
 
-app.get('/comics/:slug/images/:chapter_id', async (req, res) => {
+app.get('/comics/:slug/chapters/:chapter_id', async (req, res) => {
   const { params } = req;
   const slug = params.slug;
   const chapter_id = params.chapter_id ? Number(params.chapter_id) : null;

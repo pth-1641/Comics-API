@@ -98,8 +98,8 @@ class ComicsApi {
           if (key === 'genres') {
             const genresList = Array.isArray(value) ? value : [value];
             const genres = genresList.map((genre: string) => {
-              const foundGenre = allGenres.find((g: any) => g.title === genre);
-              return { id: foundGenre?.id, title: foundGenre?.title };
+              const foundGenre = allGenres.find((g: any) => g.name === genre);
+              return { id: foundGenre?.id, name: foundGenre?.name };
             });
             return { genres };
           }
@@ -181,15 +181,15 @@ class ComicsApi {
       const $ = await this.createRequest('');
       const genres = Array.from($('#mainNav .clearfix li a')).map((item) => {
         const id = this.getGenreId($(item).attr('href'));
-        const title = this.trim($(item).text());
+        const name = this.trim($(item).text());
         const description = $(item).attr('data-title');
-        return { id: id === 'tim-truyen' ? 'all' : id, title, description };
+        return { id: id === 'tim-truyen' ? 'all' : id, name, description };
       });
       return [
         ...genres,
         {
           id: '16',
-          title: '16+',
+          name: '16+',
           description:
             'Là thể loại có nhiều cảnh nóng, đề cập đến các vấn đề nhạy cảm giới tính hay các cảnh bạo lực máu me .... Nói chung là truyện có tác động xấu đến tâm sinh lý của những độc giả chưa đủ 16 tuổi',
         },
@@ -502,6 +502,7 @@ class ComicsApi {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
+        const id = $(item).attr('id');
         const avatar = 'https:' + $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
         const content = $('.comment-content', item).first().text().trim();
@@ -509,7 +510,7 @@ class ComicsApi {
           .first()
           .text();
         const stickers = Array.from(
-          $('.comment-content > img', item).first()
+          $(`#${id} > .summary > .info > .comment-content > img`)
         ).map((img) => 'https:' + $(img).attr('src'));
         const created_at = $('.comment-footer abbr', item)
           .first()
