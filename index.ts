@@ -86,7 +86,10 @@ class ComicsApi {
         const title = this.trim($('figcaption h3', item).text());
         const id = this.getComicId($('a', item).attr('href'));
         const is_trending = !!$('.icon-hot', item).toString();
-        const short_description = $('.box_text', item).text();
+        const short_description = $('.box_text', item)
+          .text()
+          .replace(/-/g, '')
+          .replace(/\n/g, ' ');
         const cols = Array.from($('.message_main p', item)).map((col) => {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
@@ -393,8 +396,8 @@ class ComicsApi {
       const thumbnail = 'https:' + $('#item-detail .col-image img').attr('src');
       const description = $('.detail-content p')
         .text()
-        .replace(/\n|-/g, ' ')
-        .replace(/-/, '')
+        .replace(/\n/g, ' ')
+        .replace(/-/g, '')
         .trim();
       let authors = $('.author p:nth-child(2)').text();
       authors =
@@ -502,15 +505,18 @@ class ComicsApi {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
-        const id = $(item).attr('id');
         const avatar = 'https:' + $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
-        const content = $('.comment-content', item).first().text().trim();
+        const content = $('.comment-content', item)
+          .first()
+          .html()
+          ?.replace(/<br>/g, ' ')
+          .trim();
         const vote_count = $('.comment-footer .vote-up-count', item)
           .first()
           .text();
         const stickers = Array.from(
-          $(`#${id} > .summary > .info > .comment-content > img`)
+          $(item).find('> .summary > .info > .comment-content > img')
         ).map((img) => 'https:' + $(img).attr('src'));
         const created_at = $('.comment-footer abbr', item)
           .first()
