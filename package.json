@@ -1,9 +1,8 @@
 {
   "name": "comics-api",
-  "version": "2.7.0",
+  "version": "2.7.2",
   "description": "Vietnamese Comics API for Node using scraping technique",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "index.ts",
   "repository": {
     "url": "https://github.com/pth-1641/Comics-API",
     "type": "git"

@@ -507,17 +507,18 @@ class ComicsApi {
       const comments = Array.from($('.clearfix')).map((item) => {
         const avatar = 'https:' + $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
-        const content = $('.comment-content', item)
-          .first()
-          .html()
-          ?.replace(/<br>/g, ' ')
-          .trim();
+        const content = $('.comment-content', item).first().text().trim();
         const vote_count = $('.comment-footer .vote-up-count', item)
           .first()
           .text();
         const stickers = Array.from(
           $(item).find('> .summary > .info > .comment-content > img')
-        ).map((img) => 'https:' + $(img).attr('src'));
+        ).map(
+          (img) =>
+            $(img)
+              .attr('src')
+              ?.match(/url=(.*)$/)?.[1]
+        );
         const created_at = $('.comment-footer abbr', item)
           .first()
           .attr('title');
@@ -533,7 +534,10 @@ class ComicsApi {
             .trim();
           const vote_count = $('.comment-footer .vote-up-count', reply).text();
           const stickers = Array.from($('.comment-content > img', reply)).map(
-            (img) => 'https:' + $(img).attr('src')
+            (img) =>
+              $(img)
+                .attr('src')
+                ?.match(/url=(.*)$/)?.[1]
           );
           const created_at = $('.comment-footer abbr', reply).attr('title');
           const mention_user = $('.mention-user', reply).text().trim();
