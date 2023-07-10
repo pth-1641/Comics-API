@@ -400,10 +400,11 @@ class ComicsApi {
         .replace(/-/g, '')
         .trim();
       let authors = $('.author p:nth-child(2)').text();
-      authors =
-        authors !== 'Đang cập nhật'
-          ? $('.author p:nth-child(2)').text()
-          : 'Updating';
+      authors = /, |;\s*| - /.test(authors)
+        ? authors.split(/, |;\s*| - /)
+        : authors !== 'Đang cập nhật'
+        ? $('.author p:nth-child(2)').text()
+        : 'Updating';
       const status =
         $('.status p:nth-child(2)').text() === 'Hoàn thành'
           ? 'Finished'
