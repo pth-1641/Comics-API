@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 
 const app = express();
+app.use(require('cors')());
 
 app.get('/', async (req: any, res: any) => {
   try {
@@ -24,7 +25,9 @@ app.listen(process.env.PORT || 8080);
 // Request to prevent server sleeping
 setInterval(
   () => {
-    axios.get('https://api-comics-9g0r.onrender.com/?src=https://picsum.photos/1');
+    axios.get(
+      'https://api-comics-9g0r.onrender.com/?src=https://picsum.photos/1'
+    );
   },
   870000 // 14m30s
 );
