@@ -489,11 +489,22 @@ class ComicsApi {
       const token = body('#ctl00_divCenter > script')
         .text()
         .match(/'([^']+)'/)[1];
-      const { data } = await axios.get(
-        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=0&chapterId=${chapterId}&parentId=0&pageNumber=${page}&token=${token}`,
-        { headers: { 'User-Agent': '*' } }
-      );
-      if (!data.success) {
+      const url = (chapterId: number) =>
+        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=0&chapterId=${chapterId}&parentId=0&pageNumber=${page}&token=${token}`;
+      let data;
+      const [main, backup] = await Promise.all([
+        axios.get(url(chapterId), {
+          headers: { 'User-Agent': '*' },
+        }),
+        axios.get(url(-1), {
+          headers: { 'User-Agent': '*' },
+        }),
+      ]);
+      if (main.data.success) {
+        data = main.data;
+      } else if (backup.data.success) {
+        data = backup.data;
+      } else {
         return {
           status: 400,
           message: 'Something went wrong!',

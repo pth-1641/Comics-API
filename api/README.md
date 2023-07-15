@@ -101,10 +101,6 @@ _Path_: /comics/{comic_id}/chapters/{chapter_id}
 
 ### **Comic Comments**
 
-```html
-📝 If comic have only 1 chapter, using chapterId = -1 for result
-```
-
 > comic_id: string \
 > page: number _(option)_ \
 > chapter_id: number _(option)_

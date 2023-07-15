@@ -32,10 +32,6 @@ Comics.getChapters('tham-tu-conan');
 
 ### **Comments**
 
-```
-📝 If comic have only 1 chapter, using chapterId = -1 for result
-```
-
 > chapter: string \
 > page: number _(option)_ \
 > chapterId: number _(option)_

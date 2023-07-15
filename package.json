@@ -1,6 +1,6 @@
 {
   "name": "comics-api",
-  "version": "2.7.3",
+  "version": "2.7.4",
   "description": "Vietnamese Comics API for Node using scraping technique",
   "main": "index.ts",
   "repository": {
