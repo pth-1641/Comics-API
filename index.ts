@@ -453,12 +453,21 @@ class ComicsApi {
         this.createRequest(`truyen-tranh/${id}/chapter/${chapterId}`),
         this.getChapters(comicId),
       ]);
+      const [_, cdn_1, cdn_2] = $('#ctl00_divCenter script')
+        .text()
+        .match(/gOpts\.cdn="(.*?)";.*?gOpts\.cdn2="(.*?)";/);
+
       const images = Array.from($('.page-chapter img')).map((img) => {
         const page = Number($(img).attr('data-index'));
+        const host = $(img)
+          .attr('src')
+          .match(/^\/\/([^/]+)/)[0];
         const src = `https://api-comics-9g0r.onrender.com?src=https:${$(
           img
         ).attr('src')}`;
-        return { page, src };
+        const backup_url_1 = cdn_1 ? src.replace(host, cdn_1) : '';
+        const backup_url_2 = cdn_2 ? src.replace(host, cdn_2) : '';
+        return { page, src, backup_url_1, backup_url_2 };
       });
       const chapter_name = $('.breadcrumb li:last-child').first().text();
       const comic_name = $('.breadcrumb li:nth-last-child(2)').first().text();
