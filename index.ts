@@ -448,9 +448,8 @@ class ComicsApi {
 
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
-      const id = comicId.replace(/-\d+$/, '');
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${id}/chapter/${chapterId}`),
+        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`),
         this.getChapters(comicId),
       ]);
       const [_, cdn_1, cdn_2] = $('#ctl00_divCenter script')
