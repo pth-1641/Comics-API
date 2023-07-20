@@ -1,4 +1,5 @@
 import express from 'express';
+import axios from 'axios';
 import { Comics } from '..';
 
 const app = express();
@@ -181,6 +182,21 @@ topComicsApiPaths.forEach(({ path, callback }) => {
     const page = query.page ? Number(query.page) : 1;
     res.json(await callback(status, page));
   });
+});
+
+app.get('/images', async (req: any, res: any) => {
+  try {
+    const { src } = req.query;
+    const response = await axios.get(src, {
+      responseType: 'stream',
+      headers: {
+        referer: 'https://www.nettruyen.com',
+      },
+    });
+    response.data.pipe(res);
+  } catch (err) {
+    throw err;
+  }
 });
 
 app.get('/', (req, res) => {
