@@ -9,6 +9,18 @@ app.use(require('cors')());
 
 const allStatus = ['all', 'completed', 'updating'];
 
+// const allowedHosts = ['https://ncomics.vercel.app'];
+
+// // middleware
+// app.use((req, res, next) => {
+//   const host = req.headers.host;
+//   if (host && allowedHosts.includes(host)) {
+//     next();
+//   } else {
+//     res.status(403).send('Unauthorized');
+//   }
+// });
+
 // Genres
 app.get('/genres', async (req, res) => {
   res.send(await Comics.getGenres());
