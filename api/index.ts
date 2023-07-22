@@ -12,7 +12,8 @@ const allStatus = ['all', 'completed', 'updating'];
 // middleware
 app.use((req, res, next) => {
   const hostname = req.headers['x-forwarded-host'];
-  if (hostname === process.env.HOST) {
+  console.log(req.headers);
+  if (hostname?.includes(process.env.HOST as string)) {
     next();
   } else {
     res.json({ status: 403, message: 'Unauthorized' });
