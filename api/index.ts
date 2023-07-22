@@ -6,19 +6,17 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(require('cors')());
+require('dotenv').config();
 
 const allStatus = ['all', 'completed', 'updating'];
 
-const allowedHosts = ['ncomics.vercel.app'];
-
 // middleware
 app.use((req, res, next) => {
-  console.log(req.headers);
-  const host = req.headers.host;
-  if (host && allowedHosts.includes(host)) {
+  const hostname = req.hostname;
+  if (hostname === process.env.HOST) {
     next();
   } else {
-    res.json({ status: 403, message: host });
+    res.json({ status: 403, message: 'Unauthorized' });
   }
 });
 
