@@ -2,7 +2,7 @@
 
 Vietnamese Comics API for client using scraping technique
 
-# ❌ Don't use this to crawl image!
+## ❌ Don't use this to crawl image!
 
 ## ⚠️ Unofficial API from [Nettruyen](https://nettruyen.com)
 

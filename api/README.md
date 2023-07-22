@@ -2,6 +2,8 @@
 
 Vietnamese Comics API for **CLIENT** using scraping technique
 
+## ❌ Don't use this to crawl image!
+
 ## ⚠️ Unofficial API from [Nettruyen](https://nettruyen.com)
 
 ### **Base URL**: https://comics-api.vercel.app
@@ -101,9 +103,9 @@ _Path_: /comics/{comic_id}/chapters/{chapter_id}
 
 ### **Comic Comments**
 
-> comic_id: string \
-> page: number _(option)_ \
-> chapter_id: number _(option)_
+> comic*id: string \
+> page: number *(option)_ \
+> chapter_id: number _(option)\_
 
 _Path_: /comics/{comic_id}/comments?page={page}&chapter={chapter_id}
 
