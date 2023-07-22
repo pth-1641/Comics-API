@@ -13,12 +13,12 @@ const allowedHosts = ['ncomics.vercel.app'];
 
 // middleware
 app.use((req, res, next) => {
-  console.log(req.headers.host);
+  console.log(req.headers);
   const host = req.headers.host;
   if (host && allowedHosts.includes(host)) {
     next();
   } else {
-    res.json({ status: 403, message: 'Unauthorized' });
+    res.json({ status: 403, message: host });
   }
 });
 
