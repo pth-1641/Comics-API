@@ -12,11 +12,12 @@ const allStatus = ['all', 'completed', 'updating'];
 
 // middleware
 app.use((req, res, next) => {
+  console.log(req.headers);
   const hostname = req.hostname;
   if (hostname === process.env.HOST) {
     next();
   } else {
-    res.json({ status: 403, message: 'Unauthorized' });
+    res.json({ status: 403, message: hostname });
   }
 });
 
