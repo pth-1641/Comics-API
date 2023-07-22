@@ -9,17 +9,18 @@ app.use(require('cors')());
 
 const allStatus = ['all', 'completed', 'updating'];
 
-// const allowedHosts = ['https://ncomics.vercel.app'];
+const allowedHosts = ['ncomics.vercel.app'];
 
-// // middleware
-// app.use((req, res, next) => {
-//   const host = req.headers.host;
-//   if (host && allowedHosts.includes(host)) {
-//     next();
-//   } else {
-//     res.status(403).send('Unauthorized');
-//   }
-// });
+// middleware
+app.use((req, res, next) => {
+  console.log(req.headers.host);
+  const host = req.headers.host;
+  if (host && allowedHosts.includes(host)) {
+    next();
+  } else {
+    res.json({ status: 403, message: 'Unauthorized' });
+  }
+});
 
 // Genres
 app.get('/genres', async (req, res) => {
