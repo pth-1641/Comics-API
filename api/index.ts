@@ -6,7 +6,6 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(require('cors')());
-require('dotenv').config();
 
 const allStatus = ['all', 'completed', 'updating'];
 
