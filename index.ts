@@ -26,7 +26,7 @@ class ComicsApi {
 
   private getComicId(link?: string): string | undefined {
     if (!link) return '';
-    return link?.match(/\/([^/]+)$/)?.[1];
+    return link?.match(/\/([^/]+)-\d+$/)?.[1];
   }
 
   private getGenreId(link: string): string | undefined {
@@ -156,7 +156,7 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const $ = await this.createRequest(`truyen-tranh/${comicId}`);
+      const $ = await this.createRequest(`truyen-tranh/${comicId}-1`);
       const id = $('.star').attr('data-id');
       const { data } = await axios.get(
         `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
@@ -388,7 +388,7 @@ class ComicsApi {
   public async getComicDetail(comicId: string): Promise<any> {
     try {
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${comicId}`),
+        this.createRequest(`truyen-tranh/${comicId}-1`),
         this.getChapters(comicId),
       ]);
       const title = $('.title-detail').text();
