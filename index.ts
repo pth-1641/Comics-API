@@ -488,7 +488,7 @@ class ComicsApi {
     chapterId: number = -1
   ): Promise<any> {
     try {
-      const body = await this.createRequest(`truyen-tranh/${comicId}`);
+      const body = await this.createRequest(`truyen-tranh/${comicId}-1`);
       const id = body('head meta[property="og:image"]')
         .attr('content')
         .match(/\/(\d+)\./)[1];

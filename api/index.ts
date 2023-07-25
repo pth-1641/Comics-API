@@ -9,17 +9,6 @@ app.use(require('cors')());
 
 const allStatus = ['all', 'completed', 'updating'];
 
-// // middleware
-// app.use((req, res, next) => {
-//   const hostname = req.headers['x-forwarded-host'];
-//   console.log(req.headers);
-// if (hostname?.includes(process.env.HOST?.split(', '))) {
-//     next();
-//   } else {
-//     res.json({ status: 403, message: 'Unauthorized' });
-//   }
-// });
-
 // Genres
 app.get('/genres', async (req, res) => {
   res.send(await Comics.getGenres());
