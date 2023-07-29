@@ -162,7 +162,7 @@ class ComicsApi {
         `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
         {
           headers: {
-            'User-Agent': '*',
+            'User-Agent': this.domain,
           },
         }
       );
@@ -500,10 +500,10 @@ class ComicsApi {
       let data;
       const [main, backup] = await Promise.all([
         axios.get(url(chapterId), {
-          headers: { 'User-Agent': '*' },
+          headers: { 'User-Agent': this.domain },
         }),
         axios.get(url(-1), {
-          headers: { 'User-Agent': '*' },
+          headers: { 'User-Agent': this.domain },
         }),
       ]);
       if (main.data.success) {
@@ -591,7 +591,7 @@ class ComicsApi {
       if (!query) throw Error('Invalid query');
       const { data } = await axios.get(
         `${this.domain}/Comic/Services/SuggestSearch.ashx?q=${query}`,
-        { headers: { 'User-Agent': '*' } }
+        { headers: { 'User-Agent': this.domain } }
       );
       const $ = load(data);
       const suggestions = Array.from($('li')).map((comic) => {
