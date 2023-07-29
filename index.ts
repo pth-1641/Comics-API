@@ -15,7 +15,7 @@ class ComicsApi {
         method: 'GET',
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
-          'User-Agent': '*',
+          'User-Agent': this.domain,
         },
       });
       return load(data);
