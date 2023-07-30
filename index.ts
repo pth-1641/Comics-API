@@ -1,12 +1,15 @@
 import { load } from 'cheerio';
 import axios from 'axios';
+import crypto from 'crypto';
 
 type Status = 'all' | 'completed' | 'updating';
 class ComicsApi {
   private domain: string;
+  private agent: string;
 
   constructor() {
     this.domain = 'https://www.nettruyen.com';
+    this.agent = crypto.randomBytes(8).toString('hex');
   }
 
   private async createRequest(path: string): Promise<any> {
@@ -15,7 +18,7 @@ class ComicsApi {
         method: 'GET',
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
-          'User-Agent': this.domain,
+          'User-Agent': this.agent,
         },
       });
       return load(data);
@@ -162,7 +165,7 @@ class ComicsApi {
         `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
         {
           headers: {
-            'User-Agent': this.domain,
+            'User-Agent': this.agent,
           },
         }
       );
@@ -500,10 +503,10 @@ class ComicsApi {
       let data;
       const [main, backup] = await Promise.all([
         axios.get(url(chapterId), {
-          headers: { 'User-Agent': this.domain },
+          headers: { 'User-Agent': this.agent },
         }),
         axios.get(url(-1), {
-          headers: { 'User-Agent': this.domain },
+          headers: { 'User-Agent': this.agent },
         }),
       ]);
       if (main.data.success) {
@@ -591,7 +594,7 @@ class ComicsApi {
       if (!query) throw Error('Invalid query');
       const { data } = await axios.get(
         `${this.domain}/Comic/Services/SuggestSearch.ashx?q=${query}`,
-        { headers: { 'User-Agent': this.domain } }
+        { headers: { 'User-Agent': this.agent } }
       );
       const $ = load(data);
       const suggestions = Array.from($('li')).map((comic) => {
