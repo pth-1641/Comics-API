@@ -8,18 +8,17 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://www.nettruyen.com';
-    this.agent = this.domain;
+    this.domain = 'https://corsproxy.io/?https%3A%2F%2Fwww.nettruyenmax.com';
+    this.agent = crypto.randomBytes(8).toString('hex');
   }
 
   private async createRequest(path: string): Promise<any> {
     try {
       const { data } = await axios.request({
         method: 'GET',
-        url: 'https://proxy.scrapeops.io/v1/',
-        params: {
-          api_key: process.env.API_KEY,
-          url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
+        url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
+        headers: {
+          'User-Agent': this.agent,
         },
       });
       return load(data);
