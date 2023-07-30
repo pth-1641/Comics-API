@@ -9,25 +9,19 @@ class ComicsApi {
 
   constructor() {
     this.domain = 'https://www.nettruyen.com';
-    this.agent = crypto.randomBytes(8).toString('hex');
+    this.agent = this.domain;
   }
 
   private async createRequest(path: string): Promise<any> {
     try {
-      // const { data } = await axios.request({
-      //   method: 'GET',
-      //   url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
-      //   headers: {
-      //     'User-Agent': this.agent,
-      //   },
-      // });
-      const res = await fetch(`${this.domain}/${path}`.replace(/\?+/g, '?'), {
-        headers: {
-          'User-Agent': this.agent,
+      const { data } = await axios.request({
+        method: 'GET',
+        url: 'https://proxy.scrapeops.io/v1/',
+        params: {
+          api_key: process.env.API_KEY,
+          url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         },
       });
-      const data = await res.text();
-      console.log(data);
       return load(data);
     } catch (err) {
       throw err;
@@ -632,3 +626,5 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
+
+Comics.getGenres().then((data) => data);
