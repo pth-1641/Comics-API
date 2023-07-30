@@ -27,6 +27,7 @@ class ComicsApi {
         },
       });
       const data = await res.text();
+      console.log(data);
       return load(data);
     } catch (err) {
       throw err;
