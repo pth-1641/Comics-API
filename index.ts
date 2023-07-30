@@ -14,13 +14,19 @@ class ComicsApi {
 
   private async createRequest(path: string): Promise<any> {
     try {
-      const { data } = await axios.request({
-        method: 'GET',
-        url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
+      // const { data } = await axios.request({
+      //   method: 'GET',
+      //   url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
+      //   headers: {
+      //     'User-Agent': this.agent,
+      //   },
+      // });
+      const res = await fetch(`${this.domain}/${path}`.replace(/\?+/g, '?'), {
         headers: {
           'User-Agent': this.agent,
         },
       });
+      const data = await res.text();
       return load(data);
     } catch (err) {
       throw err;
