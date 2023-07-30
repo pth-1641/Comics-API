@@ -21,6 +21,7 @@ class ComicsApi {
           'User-Agent': this.agent,
         },
       });
+      console.log(data);
       return load(data);
     } catch (err) {
       throw err;
