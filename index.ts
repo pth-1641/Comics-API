@@ -8,7 +8,7 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = `https://webcache.googleusercontent.com/search?q=cache:${process.env.HOST}`;
+    this.domain = 'https://www.nettruyen.com';
     this.agent = crypto.randomBytes(8).toString('hex');
   }
 
@@ -19,6 +19,11 @@ class ComicsApi {
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
           'User-Agent': this.agent,
+        },
+        proxy: {
+          protocol: 'https',
+          host: `172.67.72.${Math.floor(Math.random() * 254) + 1}`,
+          port: 443,
         },
       });
       return load(data.data);
