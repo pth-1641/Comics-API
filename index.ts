@@ -8,7 +8,7 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://corsproxy.io/?https://www.nettruyenmax.com';
+    this.domain = `https://webcache.googleusercontent.com/search?q=cache:${process.env.HOST}`;
     this.agent = crypto.randomBytes(8).toString('hex');
   }
 
@@ -21,8 +21,6 @@ class ComicsApi {
           'User-Agent': this.agent,
         },
       });
-      console.log(data.request.res.responseUrl);
-      // console.log(data);
       return load(data.data);
     } catch (err) {
       throw err;
