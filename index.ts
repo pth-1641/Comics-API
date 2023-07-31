@@ -8,21 +8,22 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://corsproxy.io/?https%3A%2F%2Fwww.nettruyenmax.com';
+    this.domain = 'https://corsproxy.io/?https://www.nettruyenmax.com';
     this.agent = crypto.randomBytes(8).toString('hex');
   }
 
   private async createRequest(path: string): Promise<any> {
     try {
-      const { data } = await axios.request({
+      const data = await axios.request({
         method: 'GET',
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
           'User-Agent': this.agent,
         },
       });
-      console.log(data);
-      return load(data);
+      console.log(data.request.res.responseUrl);
+      // console.log(data);
+      return load(data.data);
     } catch (err) {
       throw err;
     }
