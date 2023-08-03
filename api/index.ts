@@ -1,5 +1,5 @@
 import express from 'express';
-import axios from 'axios';
+import axios from 'axios-https-proxy-fix';
 import { Comics } from '..';
 
 const app = express();
