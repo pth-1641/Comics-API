@@ -96,8 +96,8 @@ class ComicsApi {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
           );
-          const value = /, |;\s*| - /.test(detail)
-            ? detail.split(/, |;\s*| - /)
+          const value = /,|;\s*| - /.test(detail)
+            ? detail.split(/,|;\s*| - /)
             : detail;
           const key = keys[label];
           if (key === 'genres') {
@@ -110,7 +110,7 @@ class ComicsApi {
           }
           if (key === 'status') {
             return {
-              status: value === 'Hoàn thành' ? 'Completed' : 'Updating',
+              status: value === 'Hoàn Thành' ? 'Completed' : 'Updating',
             };
           }
           return {
@@ -120,7 +120,7 @@ class ComicsApi {
         const lastest_chapters = Array.from($('.comic-item li', item)).map(
           (chap) => {
             const id = Number($('a', chap).attr('data-id'));
-            const name = $('a', chap).text();
+            const name = $('a', chap).text().trim();
             const updated_at = $('.time', chap).text();
             return {
               id,
@@ -207,20 +207,20 @@ class ComicsApi {
     type: 'hot' | 'boy' | 'girl' = 'hot'
   ): Promise<any> {
     const keys = {
-      hot: 'hot',
-      boy: 'truyen-con-trai',
-      girl: 'truyen-con-gai',
+      hot: 'truyen-tranh-hot',
+      boy: 'truyen-tranh-con-trai',
+      girl: 'truyen-tranh-con-gai',
     };
     const $ = await this.createRequest(keys[type]);
     const comics = Array.from($('#ctl00_divAlt1 div.item')).map((item) => {
       const id = this.getComicId($('a', item).attr('href'));
       const title = $('a', item).attr('title');
-      const thumbnail = 'https:' + $('img', item).attr('data-src');
+      const thumbnail = $('img', item).attr('data-original');
       const updated_at = this.trim($('.time', item).text());
       const chapter_id = Number(
         $('.slide-caption > a', item).attr('href').split('/').at(-1)
       );
-      const name = $('.slide-caption > a', item).text();
+      const name = $('.slide-caption > a', item).text().trim();
       return {
         id,
         title,
@@ -245,7 +245,7 @@ class ComicsApi {
 
   public async getCompletedComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('truyen-full', page);
+      return await this.getComics('tim-truyen?', page, 'completed');
     } catch (err) {
       throw err;
     }
@@ -362,7 +362,7 @@ class ComicsApi {
 
   public async getBoyComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('truyen-con-trai?', page);
+      return await this.getComics('truyen-tranh-con-trai?', page);
     } catch (err) {
       throw err;
     }
@@ -370,7 +370,7 @@ class ComicsApi {
 
   public async getGirlComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('truyen-con-gai?', page);
+      return await this.getComics('truyen-tranh-con-gai?', page);
     } catch (err) {
       throw err;
     }
@@ -415,7 +415,6 @@ class ComicsApi {
         const name = $(item).text();
         return { id, name };
       });
-      const is_adult = !!$('.alert-danger').toString();
       const other_names = $('.other-name')
         .text()
         .split(/, |;| - /)
@@ -439,7 +438,6 @@ class ComicsApi {
         followers,
         chapters,
         id: comicId,
-        is_adult,
         other_names: other_names[0] !== '' ? other_names : [],
       };
     } catch (err) {

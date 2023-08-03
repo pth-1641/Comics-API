@@ -11,7 +11,7 @@ const allStatus = ['all', 'completed', 'updating'];
 
 // Genres
 app.get('/genres', async (req, res) => {
-  res.send(await Comics.getGenres());
+  res.json(await Comics.getGenres());
 });
 
 app.get('/genres/:slug', async (req, res) => {
@@ -22,7 +22,7 @@ app.get('/genres/:slug', async (req, res) => {
   //@ts-ignore
   if (!allStatus.includes(status)) throw Error('Invalid status');
   //@ts-ignore
-  res.send(await Comics.getComicsByGenre(slug, page, status));
+  res.json(await Comics.getComicsByGenre(slug, page, status));
 });
 
 // New Comics
@@ -63,7 +63,7 @@ searchApiPaths.forEach(({ path, callback }) => {
     if (!q) throw Error('Invalid query');
     const page = query.page ? Number(query.page) : 1;
     //@ts-ignore
-    res.send(await callback(q, page));
+    res.json(await callback(q, page));
   });
 });
 
