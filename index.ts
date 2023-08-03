@@ -14,6 +14,7 @@ class ComicsApi {
 
   private async createRequest(path: string): Promise<any> {
     try {
+      console.log(`${this.domain}/${path}`.replace(/\?+/g, '?'));
       const data = await axios.request({
         method: 'GET',
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
@@ -76,10 +77,7 @@ class ComicsApi {
         ),
         this.getGenres(),
       ]);
-      const total_pages =
-        $('a[title="Trang cuối"]')?.attr('href')?.split('=').at(-1) ||
-        $('.pagination-outter li.active a').text() ||
-        1;
+      const total_pages = $('.page-item:nth-last-child(2)').text() || 1;
       if (page > Number(total_pages)) {
         return { status: 404, message: 'Page not found' };
       }
