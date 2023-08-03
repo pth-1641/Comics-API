@@ -96,12 +96,12 @@ class ComicsApi {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
           );
-          const value = /,|;\s*| - /.test(detail)
-            ? detail.split(/,|;\s*| - /)
-            : detail;
+          const value = /, |;\s*| - /.test(detail)
+            ? detail.split(/, |;\s*| - /)
+            : detail.trim();
           const key = keys[label];
           if (key === 'genres') {
-            const genresList = Array.isArray(value) ? value : [value];
+            const genresList = value.includes(',') ? value.split(',') : [value];
             const genres = genresList.map((genre: string) => {
               const foundGenre = allGenres.find((g: any) => g.name === genre);
               return { id: foundGenre?.id, name: foundGenre?.name };
@@ -452,7 +452,9 @@ class ComicsApi {
         this.getChapters(comicId),
       ]);
       const images = Array.from($('.page-chapter img')).map((img, idx) => {
-        const src = `/images?src=${$(img).attr('src')}`;
+        const src = `https://comics-api.vercel.app/images?src=${$(img).attr(
+          'src'
+        )}`;
         return { page: idx + 1, src };
       });
       const chapter_name = $('.breadcrumb li:last-child').first().text();
