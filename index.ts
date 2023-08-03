@@ -189,15 +189,7 @@ class ComicsApi {
         const description = $(item).attr('data-title');
         return { id: id === 'tim-truyen' ? 'all' : id, name, description };
       });
-      return [
-        ...genres,
-        {
-          id: '16',
-          name: '16+',
-          description:
-            'Là thể loại có nhiều cảnh nóng, đề cập đến các vấn đề nhạy cảm giới tính hay các cảnh bạo lực máu me .... Nói chung là truyện có tác động xấu đến tâm sinh lý của những độc giả chưa đủ 16 tuổi',
-        },
-      ];
+      return genres;
     } catch (err) {
       throw err;
     }
@@ -483,7 +475,7 @@ class ComicsApi {
       const total_comments = data.data.commentCount;
       const $ = load(data.data.response);
       const total_pages = Math.ceil(total_comments / 15);
-      if (page > total_pages) {
+      if (page > total_pages && total_pages > 0) {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
