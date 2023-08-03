@@ -8,7 +8,7 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://www.nettruyenio.com';
+    this.domain = 'https://nettruyenco.vn';
     this.agent = crypto.randomBytes(8).toString('hex');
   }
 
@@ -623,5 +623,3 @@ class ComicsApi {
 const Comics = new ComicsApi();
 
 export { Comics };
-
-Comics.getGenres().then((data) => console.log(data));

@@ -190,7 +190,7 @@ app.get('/images', async (req: any, res: any) => {
     const response = await axios.get(src, {
       responseType: 'stream',
       headers: {
-        referer: 'https://www.nettruyenio.com',
+        referer: 'https://nettruyenco.vn',
       },
     });
     response.data.pipe(res);
