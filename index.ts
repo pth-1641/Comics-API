@@ -1,5 +1,5 @@
 import { load } from 'cheerio';
-import axios from 'axios';
+import axios from 'axios-https-proxy-fix';
 import crypto from 'crypto';
 
 type Status = 'all' | 'completed' | 'updating';
@@ -8,7 +8,7 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://www.nettruyen.com';
+    this.domain = 'https://www.nettruyenio.com';
     this.agent = crypto.randomBytes(8).toString('hex');
   }
 
@@ -19,11 +19,6 @@ class ComicsApi {
         url: `${this.domain}/${path}`.replace(/\?+/g, '?'),
         headers: {
           'User-Agent': this.agent,
-        },
-        proxy: {
-          protocol: 'https',
-          host: `172.67.72.${Math.floor(Math.random() * 254) + 1}`,
-          port: 443,
         },
       });
       return load(data.data);
@@ -467,9 +462,7 @@ class ComicsApi {
         const host = $(img)
           .attr('src')
           .match(/^\/\/([^/]+)/)[0];
-        const src = `https://comics-api.vercel.app/images?src=https:${$(
-          img
-        ).attr('src')}`;
+        const src = `/images?src=https:${$(img).attr('src')}`;
         const backup_url_1 = cdn_1 ? src.replace(host, cdn_1) : '';
         const backup_url_2 = cdn_2 ? src.replace(host, cdn_2) : '';
         return { page, src, backup_url_1, backup_url_2 };
@@ -631,4 +624,4 @@ const Comics = new ComicsApi();
 
 export { Comics };
 
-Comics.getGenres().then((data) => data);
+Comics.getGenres().then((data) => console.log(data));

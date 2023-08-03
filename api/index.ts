@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Comics } from '..';
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 
 app.use(require('cors')());
 
@@ -190,7 +190,7 @@ app.get('/images', async (req: any, res: any) => {
     const response = await axios.get(src, {
       responseType: 'stream',
       headers: {
-        referer: 'https://www.nettruyen.com',
+        referer: 'https://www.nettruyenio.com',
       },
     });
     response.data.pipe(res);
