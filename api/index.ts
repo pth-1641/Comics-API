@@ -3,7 +3,7 @@ import axios from 'axios-https-proxy-fix';
 import { Comics } from '..';
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8080;
 
 app.use(require('cors')());
 
@@ -139,7 +139,7 @@ app.get('/comics/:slug/comments', async (req, res) => {
   const chapter = query.chapter ? Number(query.chapter) : -1;
   // @ts-ignore
   if (!slug) throw Error('Invalid Comic ID');
-  res.json(await Comics.getComments(slug, page, chapter));
+  res.json(await Comics.getComments(slug, page));
 });
 
 // Top Comics

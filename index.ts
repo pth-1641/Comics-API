@@ -84,8 +84,7 @@ class ComicsApi {
         return { status: 404, message: 'Page not found' };
       }
       const comics = Array.from($('#ctl00_divCenter .item')).map((item) => {
-        const thumbnail =
-          'https:' + $('.image img', item).attr('data-original');
+        const thumbnail = $('.image img', item).attr('data-original');
         const title = this.trim($('figcaption h3', item).text());
         const id = this.getComicId($('a', item).attr('href'));
         const is_trending = !!$('.icon-hot', item).toString();
@@ -355,7 +354,7 @@ class ComicsApi {
 
   public async getTrendingComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('hot?', page);
+      return await this.getComics('truyen-tranh-hot?', page);
     } catch (err) {
       throw err;
     }
@@ -395,7 +394,7 @@ class ComicsApi {
         this.getChapters(comicId),
       ]);
       const title = $('.title-detail').text();
-      const thumbnail = 'https:' + $('#item-detail .col-image img').attr('src');
+      const thumbnail = $('#item-detail .col-image img').attr('src');
       const description = $('.detail-content p')
         .text()
         .replace(/\n/g, ' ')
@@ -454,18 +453,9 @@ class ComicsApi {
         this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`),
         this.getChapters(comicId),
       ]);
-      const [_, cdn_1, cdn_2] = $('#ctl00_divCenter script')
-        .text()
-        .match(/gOpts\.cdn="(.*?)";.*?gOpts\.cdn2="(.*?)";/);
-      const images = Array.from($('.page-chapter img')).map((img) => {
-        const page = Number($(img).attr('data-index'));
-        const host = $(img)
-          .attr('src')
-          .match(/^\/\/([^/]+)/)[0];
-        const src = `/images?src=https:${$(img).attr('src')}`;
-        const backup_url_1 = cdn_1 ? src.replace(host, cdn_1) : '';
-        const backup_url_2 = cdn_2 ? src.replace(host, cdn_2) : '';
-        return { page, src, backup_url_1, backup_url_2 };
+      const images = Array.from($('.page-chapter img')).map((img, idx) => {
+        const src = `/images?src=${$(img).attr('src')}`;
+        return { page: idx + 1, src };
       });
       const chapter_name = $('.breadcrumb li:last-child').first().text();
       const comic_name = $('.breadcrumb li:nth-last-child(2)').first().text();
@@ -483,48 +473,22 @@ class ComicsApi {
     }
   }
 
-  public async getComments(
-    comicId: string,
-    page: number = 1,
-    chapterId: number = -1
-  ): Promise<any> {
+  public async getComments(comicId: string, page: number = 1): Promise<any> {
     try {
       const body = await this.createRequest(`truyen-tranh/${comicId}-1`);
-      const id = body('head meta[property="og:image"]')
-        .attr('content')
-        .match(/\/(\d+)\./)[1];
-      const token = body('#ctl00_divCenter > script')
-        .text()
-        .match(/'([^']+)'/)[1];
-      const url = (chapterId: number) =>
-        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=0&chapterId=${chapterId}&parentId=0&pageNumber=${page}&token=${token}`;
-      let data;
-      const [main, backup] = await Promise.all([
-        axios.get(url(chapterId), {
-          headers: { 'User-Agent': this.agent },
-        }),
-        axios.get(url(-1), {
-          headers: { 'User-Agent': this.agent },
-        }),
-      ]);
-      if (main.data.success) {
-        data = main.data;
-      } else if (backup.data.success) {
-        data = backup.data;
-      } else {
-        return {
-          status: 400,
-          message: 'Something went wrong!',
-        };
-      }
-      const total_comments = Number(data.commentCount.replace(',', ''));
-      const $ = load(data.response);
+      const id = body('.isFollow').attr('data-id');
+      const { data } = await axios.get(
+        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}pageNumber=${page}`
+      );
+      const total_comments = data.data.commentCount;
+      const $ = load(data.data.response);
       const total_pages = Math.ceil(total_comments / 15);
       if (page > total_pages) {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
-        const avatar = 'https:' + $('.avatar img', item).attr('src');
+        const avatar =
+          'https://st.nettruyenmax.com/Data/SiteImages/anonymous.png';
         const username = $(item).find('.authorname').first().text().trim();
         const content = $('.comment-content', item).first().text().trim();
         const vote_count = $('.comment-footer .vote-up-count', item)
@@ -542,7 +506,8 @@ class ComicsApi {
           .first()
           .attr('title');
         const replies = Array.from($('.item', item)).map((reply) => {
-          const avatar = 'https:' + $('.avatar img', reply).attr('src');
+          const avatar =
+            'https://st.nettruyenmax.com/Data/SiteImages/anonymous.png';
           const username = $('.authorname', reply).text().trim();
           const content = $('.comment-content', reply)
             .clone()
