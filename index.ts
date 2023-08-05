@@ -80,7 +80,7 @@ class ComicsApi {
       }
       const comics: any = Array.from($('#main_homepage .list_grid li')).map(
         (item) => {
-          const thumbnail = $('.book_avatar img', item).attr('data-original');
+          const thumbnail = $('.book_avatar img', item).attr('src');
           const title = $('.book_avatar img', item).attr('alt');
           const id = this.getId($('a', item).attr('href'));
           const is_trending = !!$('.hot', item).toString();
