@@ -21,9 +21,6 @@ class ComicsApi {
 
   private async createRequest(path: string, host: 1 | 2 | 3 = 2): Promise<any> {
     try {
-      console.log(
-        `https://${this.hosts[host - 1]}/${path}`.replace(/\?+/g, '?')
-      );
       const { data } = await axios.request({
         method: 'GET',
         url: `https://${this.hosts[host - 1]}/${path}`.replace(/\?+/g, '?'),
@@ -78,11 +75,9 @@ class ComicsApi {
           .at(-1) ||
         $('.pagination .active').text() ||
         1;
-      console.log();
       if (page > total_pages) {
         return { status: 404, message: 'Page not found' };
       }
-      console.log($('#main_homepage .list_grid li').length);
       const comics: any = Array.from($('#main_homepage .list_grid li')).map(
         (item) => {
           const thumbnail = $('.book_avatar img', item).attr('data-original');
