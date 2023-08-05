@@ -2,7 +2,7 @@ import { load } from 'cheerio';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import https from 'https';
-import { userAgents, UALength } from './user-agent.ts';
+import { userAgents, UALength } from './user-agent';
 
 dotenv.config();
 const agent = new https.Agent({
