@@ -1,213 +1,125 @@
 # Comics API
 
-Vietnamese Comics API for client using scraping technique
+Vietnamese Comics API using scrape technique.
 
 ## ❌ Don't use this to crawl image!
 
-## ⚠️ Unofficial API from [Nettruyen](https://nettruyen.com)
+### **Base URL**: https://comics-api.vercel.app
 
-## ⚡ Using for client [here](https://github.com/pth-1641/Comics-API/blob/master/api/README.md)
+## Usage
 
-## **I. Installation**
+### **Trending**
 
-```bash
-npm i comics-api
-#or
-yarn add comics-api
-```
+> page: number _(option)_
 
-```bash
-import { Comics } from "comics-api"
-#or
-const { Comics } = require("comics-api")
-```
+_Path_: /trending?page={page}
 
-## **II. Usage**
+### **Genres**
 
-### **Chapters**
+_Path_: /genres
 
-> comicId: string
+### **Comics By Genre**
 
-```javascript
-Comics.getChapters('tham-tu-conan');
-```
+> genre_id: string
 
-### **Comments**
+_Path_: /genres/{genre_id}
 
-> chapter: string \
-> page: number _(option)_ \
-> chapterId: number _(option)_
-
-```javascript
-Comics.getComments('tham-tu-conan');
-```
-
-### **Search Comics**
+### **Search**
 
 > query: string \
 > page: number _(option)_
 
-```javascript
-Comics.searchComics('conan');
-```
+_Path_: /search?q={query}&page={page}
 
-### **Search Suggestion**
+### **Search Suggest**
 
 > query: string
 
-```javascript
-Comics.getSearchSuggest('conan');
-```
-
-### **Comic Detail**
-
-> comicId: string
-
-```javascript
-Comics.getComicDetail('tham-tu-conan');
-```
-
-### **Single Chapter**
-
-> comicId: string \
-> chapterId: number
-
-```javascript
-Comics.getChapter('tham-tu-conan', 1011493);
-```
-
-### **Genres**
-
-```javascript
-Comics.getGenres();
-```
-
-### **Trending Comics**
-
-> page: number _(option)_
-
-```javascript
-Comics.getTrending();
-```
+_Path_: /search-suggest?q={query}
 
 ### **Recommend Comics**
 
-> type: hot | boy | girl _(option)_
+_Path_: /recommend-comics
 
-```javascript
-Comics.getRecommendComics();
-```
+### **New Comics**
 
-### **New Update Comics**
+> page: number _(option)_ \
+> status: all | completed | ongoing _(option)_
 
-> page: number _(option)_
-
-```javascript
-Comics.getNewUpdateComics();
-```
-
-### **Completed Comics**
-
-> page: number _(option)_
-
-```javascript
-Comics.getCompletedComics();
-```
+_Path_: /new-comics?page={page}&status={status}
 
 ### **Boy Comics**
 
 > page: number _(option)_
 
-```javascript
-Comics.getBoyComics();
-```
+_Path_: /boy-comics?page={page}
 
 ### **Girl Comics**
 
 > page: number _(option)_
 
-```javascript
-Comics.getGirlComics();
-```
+_Path_: /girl-comics?page={page}
 
-### **New Comics**
+### **Completed Comics**
 
-> status: all | finished | updating _(option)_ \
 > page: number _(option)_
 
-```javascript
-Comics.getNewComics();
-```
+_Path_: /completed-comics?page={page}
 
-### **Comics By Genre**
+### **Recent Update Comics**
 
-> genreId: string \
+> page: number _(option)_
+
+_Path_: /recent-update-comics?page={page}
+
+### **Comic Detail**
+
+> comic_id: string
+
+_Path_: /comics/{comic_id}
+
+### **Comic Chapters**
+
+> comic_id: string
+
+_Path_: /comics/{comic_id}/chapters
+
+### **Single Chapter**
+
+> comic_id: string \
+> chapter_id: number
+
+_Path_: /comics/{comic_id}/chapters/{chapter_id}
+
+### **Top**
+
 > page: number _(option)_ \
-> status: all | finished | updating _(option)_
+> status: all | completed | ongoing _(option)_
 
-```javascript
-Comics.getComicsByGenre();
-```
+#### > **All Comic**
 
-### **Top Daily**
+_Path_: /top?page={page}&status={status}
 
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
+#### > **Daily Comic**
 
-```javascript
-Comics.getTopDailyComics();
-```
+_Path_: /top/daily?page={page}&status={status}
 
-### **Top Weekly**
+#### > **Weekly Comic**
 
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
+_Path_: /top/weekly?page={page}&status={status}
 
-```javascript
-Comics.getTopWeeklyComics();
-```
+#### > **Monthly Comic**
 
-### **Top Monthly**
+_Path_: /top/monthly?page={page}&status={status}
 
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
+#### > **Chapter**
 
-```javascript
-Comics.getTopMonthlyComics();
-```
+_Path_: /top/chapter?page={page}&status={status}
 
-### **Top Follow Comics**
+#### > **Follow**
 
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
+_Path_: /top/follow?page={page}&status={status}
 
-```javascript
-Comics.getTopFollowComics();
-```
+#### > **Comment**
 
-### **Top Comment Comics**
-
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
-
-```javascript
-Comics.getTopCommentComics();
-```
-
-### **Top All Comics**
-
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
-
-```javascript
-Comics.getTopAllComics();
-```
-
-### **Top Chapter Comics**
-
-> status: all | finished | updating _(option)_ \
-> page: number _(option)_
-
-```javascript
-Comics.getTopChapterComics();
-```
+_Path_: /top/comment?page={page}&status={status}

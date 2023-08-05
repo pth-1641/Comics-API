@@ -1,5 +1,5 @@
 import express from 'express';
-import axios from 'axios-https-proxy-fix';
+import axios from 'axios';
 import { Comics } from '..';
 
 const app = express();
@@ -11,7 +11,7 @@ const allStatus = ['all', 'completed', 'updating'];
 
 // Genres
 app.get('/genres', async (req, res) => {
-  res.json(await Comics.getGenres());
+  res.json(await Comics.getGenres('full'));
 });
 
 app.get('/genres/:slug', async (req, res) => {
@@ -109,10 +109,6 @@ const comicIdParamsApiPaths = [
     path: '/comics/:slug',
     callback: (params: string) => Comics.getComicDetail(params),
   },
-  {
-    path: '/comics/authors/:slug',
-    callback: (params: string) => Comics.getComicsByAuthor(params),
-  },
 ];
 
 comicIdParamsApiPaths.forEach(({ path, callback }) => {
@@ -130,16 +126,6 @@ app.get('/comics/:slug/chapters/:chapter_id', async (req, res) => {
   const chapter_id = params.chapter_id ? Number(params.chapter_id) : null;
   if (!slug || !chapter_id) throw Error('Invalid');
   res.json(await Comics.getChapter(slug, chapter_id));
-});
-
-app.get('/comics/:slug/comments', async (req, res) => {
-  const { params, query } = req;
-  const slug = params.slug;
-  const page = query.page ? Number(query.page) : 1;
-  const chapter = query.chapter ? Number(query.chapter) : -1;
-  // @ts-ignore
-  if (!slug) throw Error('Invalid Comic ID');
-  res.json(await Comics.getComments(slug, page));
 });
 
 // Top Comics
@@ -190,7 +176,9 @@ app.get('/images', async (req: any, res: any) => {
     const response = await axios.get(src, {
       responseType: 'stream',
       headers: {
-        referer: 'https://nettruyenco.vn',
+        referer: `https://${
+          Math.random() > 0.5 ? 'truyenqq.com' : 'nettruyenco'
+        }.vn`,
       },
     });
     response.data.pipe(res);
