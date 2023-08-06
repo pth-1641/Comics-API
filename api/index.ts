@@ -1,3 +1,4 @@
+import express from 'express'
 import axios from 'axios';
 import { Comics } from '..';
 import { userAgents, UALength } from '../user-agent';
