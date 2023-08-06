@@ -341,7 +341,7 @@ class ComicsApi {
       let authors = $('.author p:nth-child(2)').text();
       authors = /, |;\s*| - /.test(authors)
         ? authors.split(/, |;\s*| - /)
-        : authors !== 'Đang Cập Nhật'
+        : authors.toLowerCase() !== 'đang cập nhật'
         ? $('.author p:nth-child(2)').text()
         : 'Updating';
       const status =
@@ -456,8 +456,6 @@ class ComicsApi {
       throw err;
     }
   }
-
-  // ---------------------- //
 
   public async searchComics(query: string, page: number = 1): Promise<any> {
     try {
