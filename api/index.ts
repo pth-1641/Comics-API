@@ -1,4 +1,3 @@
-import express from 'express';
 import axios from 'axios';
 import { Comics } from '..';
 import { userAgents, UALength } from '../user-agent';
@@ -190,9 +189,8 @@ app.get('/images', async (req: any, res: any) => {
 
 app.get('/', (req, res) => {
   res.json({
-    NPM: 'https://www.npmjs.com/package/comics-api',
     Github: 'https://github.com/pth-1641/Comics-API',
-    Client: 'https://github.com/pth-1641/Comics-API/tree/master/api',
+    Issues: 'https://github.com/pth-1641/Comics-API/issues'
   });
 });
 
