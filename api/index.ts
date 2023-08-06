@@ -1,13 +1,14 @@
 import express from 'express';
 import axios from 'axios';
 import { Comics } from '..';
+import { userAgents, UALength } from '../user-agent';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(require('cors')());
 
-const allStatus = ['all', 'completed', 'updating'];
+const allStatus = ['all', 'completed', 'ongoing'];
 
 // Genres
 app.get('/genres', async (req, res) => {
@@ -33,7 +34,7 @@ app.get(`/new-comics`, async (req, res) => {
   //@ts-ignore
   if (!allStatus.includes(status)) throw Error('Invalid status');
   // @ts-ignore
-  res.json(await Comics.getNewComics(status, page));
+  res.json(await Comics.getNewComics(page));
 });
 
 // Recommend Comics
@@ -173,12 +174,12 @@ topComicsApiPaths.forEach(({ path, callback }) => {
 app.get('/images', async (req: any, res: any) => {
   try {
     const { src } = req.query;
+    const providers = ['nettruyennew.com', 'truyenqq.com.vn', 'nettruyenco.vn'];
     const response = await axios.get(src, {
       responseType: 'stream',
       headers: {
-        referer: `https://${
-          Math.random() > 0.5 ? 'truyenqq.com' : 'nettruyenco'
-        }.vn`,
+        referer: `https://${providers[Math.floor(Math.random() * 3)]}`,
+        'User-Agent': userAgents[Math.random() * UALength],
       },
     });
     response.data.pipe(res);

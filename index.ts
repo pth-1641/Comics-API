@@ -16,7 +16,7 @@ class ComicsApi {
 
   constructor() {
     this.hosts = process.env.HOSTS?.split(' | ') as string[];
-    this.agent = userAgents[Math.floor(Math.random() * (UALength + 1))];
+    this.agent = userAgents[Math.floor(Math.random() * UALength)];
   }
 
   private async createRequest(path: string, host: 1 | 2 | 3 = 2): Promise<any> {
@@ -111,10 +111,11 @@ class ComicsApi {
           const genres = Array.from($('.list-tags p', item))
             .map((tag: any) => {
               const foundGenre = allGenres.find(
-                (g: any) => g.name.toLowerCase() === $(tag).text().toLowerCase()
+                (g: any) =>
+                  $(tag).text().toLowerCase().trim() === g.name.toLowerCase()
               );
               if (!foundGenre) return null;
-              return { id: foundGenre?.id, name: foundGenre?.name };
+              return { id: foundGenre.id, name: foundGenre.name };
             })
             .filter(Boolean);
           return {
@@ -137,8 +138,6 @@ class ComicsApi {
                 ? `Chapter ${chapter_name.match(/\d+/)[0]}`
                 : chapter_name,
             },
-
-            //
           };
         }
       );
