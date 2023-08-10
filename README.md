@@ -12,7 +12,7 @@ Vietnamese Comics API using scrape technique.
 
 > page: number _(option)_
 
-_Path_: /trending?page={page}
+_Path_: /trending-comics?page={page}
 
 ### **Genres**
 
