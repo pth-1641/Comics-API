@@ -147,8 +147,6 @@ class ComicsApi {
     }
   }
 
-  // ---------------------- //
-
   public async getGenres(type: 'compact' | 'full' = 'compact'): Promise<any> {
     try {
       const $ = await this.createRequest('', type === 'full' ? 1 : 2);
@@ -405,14 +403,18 @@ class ComicsApi {
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`),
+        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`, 1),
         this.getChapters(comicId),
       ]);
+
       const images = Array.from($('.page-chapter img')).map((img, idx) => {
         const src = `https://comics-api.vercel.app/images?src=${$(img).attr(
-          'src'
+          'data-sv1'
         )}`;
-        return { page: idx + 1, src };
+        const backup_src = `https://comics-api.vercel.app/images?src=${$(
+          img
+        ).attr('data-sv2')}`;
+        return { page: idx + 1, src, backup_src };
       });
       const [comic_name, chapter_name]: any = this.trim(
         $('.detail-title').text()
