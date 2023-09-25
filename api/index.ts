@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import { Comics } from '..';
-import { userAgents } from '../user-agent';
+import { userAgents, UALength } from '../user-agent';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -179,7 +179,7 @@ app.get('/images', async (req: any, res: any) => {
       responseType: 'stream',
       headers: {
         referer: `https://${providers[Math.floor(Math.random() * 3)]}`,
-        'User-Agent': userAgents[Math.random() * 999],
+        'User-Agent': userAgents[Math.random() * UALength],
       },
     });
     response.data.pipe(res);

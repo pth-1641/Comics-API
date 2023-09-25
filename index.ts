@@ -2,7 +2,7 @@ import { load } from 'cheerio';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import https from 'https';
-import { userAgents } from './user-agent';
+import { UALength, userAgents } from './user-agent';
 
 dotenv.config();
 const agent = new https.Agent({
@@ -16,7 +16,7 @@ class ComicsApi {
 
   constructor() {
     this.hosts = process.env.HOSTS?.split(' | ') as string[];
-    this.agent = userAgents[Math.floor(Math.random() * 999)];
+    this.agent = userAgents[Math.floor(Math.random() * UALength)];
   }
 
   private async createRequest(path: string, host: 1 | 2 | 3 = 2): Promise<any> {
