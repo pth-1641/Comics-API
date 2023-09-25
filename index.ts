@@ -417,7 +417,7 @@ class ComicsApi {
         return { page: idx + 1, src, backup_src };
       });
       const [comic_name, chapter_name]: any = this.trim(
-        $('.detail-title').text()
+        $('.txt-primary').text().trim()
       )?.split(' - ');
       return { images, chapters, chapter_name, comic_name };
     } catch (err) {
