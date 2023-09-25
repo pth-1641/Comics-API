@@ -1,7 +1,7 @@
-import express from 'express'
+import express from 'express';
 import axios from 'axios';
 import { Comics } from '..';
-import { userAgents, UALength } from '../user-agent';
+import { userAgents } from '../user-agent';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -179,7 +179,7 @@ app.get('/images', async (req: any, res: any) => {
       responseType: 'stream',
       headers: {
         referer: `https://${providers[Math.floor(Math.random() * 3)]}`,
-        'User-Agent': userAgents[Math.random() * UALength],
+        'User-Agent': userAgents[Math.random() * 999],
       },
     });
     response.data.pipe(res);
@@ -191,7 +191,7 @@ app.get('/images', async (req: any, res: any) => {
 app.get('/', (req, res) => {
   res.json({
     Github: 'https://github.com/pth-1641/Comics-API',
-    Issues: 'https://github.com/pth-1641/Comics-API/issues'
+    Issues: 'https://github.com/pth-1641/Comics-API/issues',
   });
 });
 
