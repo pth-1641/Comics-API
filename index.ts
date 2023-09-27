@@ -403,7 +403,7 @@ class ComicsApi {
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`, 1),
+        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`, Math.random() > 0.5 ? 1 : 3),
         this.getChapters(comicId),
       ]);
 
