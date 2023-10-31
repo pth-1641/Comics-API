@@ -10,116 +10,131 @@ Vietnamese Comics API using scrape technique.
 
 ### **Trending**
 
-> page: number _(option)_
+```ts
+page: number; // option
 
-_Path_: /trending-comics?page={page}
+path: `/trending-comics?page=${page}`;
+```
 
 ### **Genres**
 
-_Path_: /genres
+```ts
+path: '/genres';
+```
 
 ### **Comics By Genre**
 
-> genre_id: string
+```ts
+genre_id: string;
+page: number; // option
+status: 'all' | 'completed' | 'ongoing'; // option
 
-_Path_: /genres/{genre_id}
+path: `/genres/${genre_id}`;
+```
 
 ### **Search**
 
-> query: string \
-> page: number _(option)_
+```ts
+query: string;
+page: number; // option
 
-_Path_: /search?q={query}&page={page}
+path: `/search?q=${query}&page=${page}`;
+```
 
 ### **Search Suggest**
 
-> query: string
+```ts
+query: string;
 
-_Path_: /search-suggest?q={query}
+path: `/search-suggest?q=${query}`;
+```
 
 ### **Recommend Comics**
 
-_Path_: /recommend-comics
+```ts
+path: '/recommend-comics';
+```
 
 ### **New Comics**
 
-> page: number _(option)_ \
-> status: all | completed | ongoing _(option)_
+```ts
+page: number; // option
 
-_Path_: /new-comics?page={page}&status={status}
+status: 'all' | 'completed' | 'ongoing'; // option
 
-### **Boy Comics**
-
-> page: number _(option)_
-
-_Path_: /boy-comics?page={page}
-
-### **Girl Comics**
-
-> page: number _(option)_
-
-_Path_: /girl-comics?page={page}
-
-### **Completed Comics**
-
-> page: number _(option)_
-
-_Path_: /completed-comics?page={page}
+path: `/new-comics?page=${page}&status=${status}`;
+```
 
 ### **Recent Update Comics**
 
-> page: number _(option)_
+```ts
+page: number; // option
+status: 'all' | 'completed' | 'ongoing'; // option
 
-_Path_: /recent-update-comics?page={page}
+path: `/recent-update-comics?page=${page}&status=${status}`;
+```
+
+### **Boy Comics**
+
+```ts
+page: number; // option
+
+path: `/boy-comics?page=${page}`;
+```
+
+### **Girl Comics**
+
+```ts
+page: number; // option
+
+path: `/girl-comics?page=${page}`;
+```
+
+### **Completed Comics**
+
+```ts
+page: number; // option
+
+path: `/completed-comics?page=${page}`;
+```
 
 ### **Comic Detail**
 
-> comic_id: string
+```ts
+comic_id: string;
 
-_Path_: /comics/{comic_id}
+path: `/comics/${comic_id}`;
+```
 
 ### **Comic Chapters**
 
-> comic_id: string
+```ts
+comic_id: string;
 
-_Path_: /comics/{comic_id}/chapters
+path: `/comics/${comic_id}/chapters`;
+```
 
 ### **Single Chapter**
 
-> comic_id: string \
-> chapter_id: number
+```ts
+comic_id: string;
+chapter_id: number;
 
-_Path_: /comics/{comic_id}/chapters/{chapter_id}
+path: `/comics/${comic_id}/chapters/${chapter_id}`;
+```
 
 ### **Top**
 
-> page: number _(option)_ \
-> status: all | completed | ongoing _(option)_
+```ts
+page: number; // option
+status: 'all' | 'completed' | 'ongoing'; // option
 
-#### > **All Comic**
-
-_Path_: /top?page={page}&status={status}
-
-#### > **Daily Comic**
-
-_Path_: /top/daily?page={page}&status={status}
-
-#### > **Weekly Comic**
-
-_Path_: /top/weekly?page={page}&status={status}
-
-#### > **Monthly Comic**
-
-_Path_: /top/monthly?page={page}&status={status}
-
-#### > **Chapter**
-
-_Path_: /top/chapter?page={page}&status={status}
-
-#### > **Follow**
-
-_Path_: /top/follow?page={page}&status={status}
-
-#### > **Comment**
-
-_Path_: /top/comment?page={page}&status={status}
+// Paths
+All: `/top?page=${page}&status=${status}`;
+Daily: `/top/daily?page=${page}&status=${status}`;
+Weekly: `/top/weekly?page=${page}&status=${status}`;
+Monthly: `/top/monthly?page=${page}&status=${status}`;
+Chapter: `/top/chapter?page=${page}&status=${status}`;
+Follow: `/top/follow?page=${page}&status=${status}`;
+Comment: `/top/comment?page=${page}&status=${status}`;
+```

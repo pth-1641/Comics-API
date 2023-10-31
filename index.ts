@@ -5,6 +5,7 @@ import https from 'https';
 import { UALength, userAgents } from './user-agent';
 
 dotenv.config();
+
 const agent = new https.Agent({
   rejectUnauthorized: false,
 });
@@ -19,11 +20,11 @@ class ComicsApi {
     this.agent = userAgents[Math.floor(Math.random() * UALength)];
   }
 
-  private async createRequest(path: string, host: 1 | 2 | 3 = 2): Promise<any> {
+  private async createRequest(path: string, host: 0 | 1 | 2 = 1): Promise<any> {
     try {
       const { data } = await axios.request({
         method: 'GET',
-        url: `https://${this.hosts[host - 1]}/${path}`.replace(/\?+/g, '?'),
+        url: `https://${this.hosts[host]}/${path}`.replace(/\?+/g, '?'),
         headers: {
           'User-Agent': this.agent,
         },
@@ -147,14 +148,10 @@ class ComicsApi {
     }
   }
 
-  public async getGenres(type: 'compact' | 'full' = 'compact'): Promise<any> {
+  public async getGenres(): Promise<any> {
     try {
-      const $ = await this.createRequest('', type === 'full' ? 1 : 2);
-      const selector =
-        type === 'compact'
-          ? '.menu_hidden:nth-child(2) a'
-          : '#mainNav .clearfix li a';
-      return Array.from($(selector)).map((item) => {
+      const $ = await this.createRequest('', Math.random() > 0.5 ? 0 : 2);
+      return Array.from($('#mainNav .clearfix li a')).map((item) => {
         const id = $(item).attr('href').split('/').at(-1);
         const name = this.trim($(item).text());
         const description = $(item).attr('data-title');
@@ -166,7 +163,7 @@ class ComicsApi {
   }
 
   public async getRecommendComics(): Promise<any> {
-    const $ = await this.createRequest('', 2);
+    const $ = await this.createRequest('', 1);
     const comics = Array.from($('#div_suggest li')).map((item) => {
       const id = this.getId($('a', item).attr('href'));
       const title = $('img', item).attr('alt');
@@ -190,17 +187,20 @@ class ComicsApi {
     return comics;
   }
 
-  public async getNewComics(page: number = 1): Promise<any> {
+  public async getNewComics(page: number = 1, status: Status): Promise<any> {
     try {
-      return await this.getComics('tim-truyen?sort=15', page);
+      return await this.getComics('tim-truyen?sort=15', page, status);
     } catch (err) {
       throw err;
     }
   }
 
-  public async getRecentUpdateComics(page: number = 1): Promise<any> {
+  public async getRecentUpdateComics(
+    page: number = 1,
+    status: Status
+  ): Promise<any> {
     try {
-      return await this.getComics('tim-truyen?', page);
+      return await this.getComics('tim-truyen?', page, status);
     } catch (err) {
       throw err;
     }
@@ -232,11 +232,12 @@ class ComicsApi {
 
   public async getComicsByGenre(
     genreId: string,
-    page: number = 1
+    page: number = 1,
+    status: Status
   ): Promise<any> {
     try {
       const path = genreId === 'all' ? 'tim-truyen?' : `tim-truyen/${genreId}?`;
-      return await this.getComics(path, page);
+      return await this.getComics(path, page, status);
     } catch (err) {
       throw err;
     }
@@ -378,7 +379,7 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const $ = await this.createRequest(`truyen-tranh/${comicId}-1`, 1);
+      const $ = await this.createRequest(`truyen-tranh/${comicId}-1`, 0);
       const id = $('.star').attr('data-id');
       const { data } = await axios.get(
         `https://${this.hosts[0]}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
@@ -444,7 +445,9 @@ class ComicsApi {
         return {
           id,
           title,
-          thumbnail,
+          thumbnail: `https://nettruyennew.com/public/images/comics/${this.getId(
+            thumbnail
+          )}`,
           lastest_chapter: lastest_chapter.startsWith('Chapter')
             ? lastest_chapter
             : 'Updating',
@@ -462,7 +465,7 @@ class ComicsApi {
   public async searchComics(query: string, page: number = 1): Promise<any> {
     try {
       return await this.getComics(
-        `tim-truyen?keyword=${query.replace(/\s+/g, '+')}`,
+        `tim-truyen?keyword=${query.trim().replace(/\s+/g, '+')}`,
         page
       );
     } catch (err) {
