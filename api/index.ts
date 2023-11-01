@@ -228,7 +228,7 @@ app.get('/', (req, res) => {
 
 // Error handlers
 app.use((req, res) => {
-  res.json({
+  res.status(404).json({
     status: 404,
     message: 'Not Found',
   });
@@ -236,7 +236,7 @@ app.use((req, res) => {
 
 // @ts-ignore
 app.use((err, req, res, next) => {
-  res.json({
+  res.status(500).json({
     status: 500,
     message: err.message,
   });
