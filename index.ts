@@ -336,7 +336,11 @@ class ComicsApi {
       ]);
       const title = $('.book_detail h1').text();
       const thumbnail = $('.book_detail img').attr('src');
-      const description = this.trim($('.detail-content p').text());
+      const description = this.trim(
+        $('.detail-content p')
+          .text()
+          .replace(/TruyenQQ/g, 'NComics')
+      );
       let authors = $('.author p:nth-child(2)').text();
       authors = /, |;\s*| - /.test(authors)
         ? authors.split(/, |;\s*| - /)
