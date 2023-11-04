@@ -244,3 +244,10 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT);
+
+setInterval(
+  () => {
+    axios.get('https://ncomics.onrender.com/history');
+  },
+  870000 // 14m30s
+);
