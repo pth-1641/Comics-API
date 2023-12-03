@@ -36,9 +36,10 @@ class ComicsApi {
     }
   }
 
-  private getId(link?: string): string | undefined {
+  private getId(link?: string, type?: 'comic' | 'genre'): string | undefined {
     if (!link) return '';
-    return link?.match(/\/([^/]+?)(?:-\d+)?$/)?.[1];
+    const regex = type === 'genre' ? /\/([^/]+?)$/ : /\/([^/]+?)(?:-\d+)?$/;
+    return link?.match(regex)?.[1];
   }
 
   private formatTotal(total: string): number | string {
@@ -352,7 +353,7 @@ class ComicsApi {
           ? 'Completed'
           : 'Ongoing';
       const genres = Array.from($('.list01 a')).map((item) => {
-        const id = this.getId($(item).attr('href'));
+        const id = this.getId($(item).attr('href'), 'genre');
         const name = $(item).text();
         return { id, name };
       });
