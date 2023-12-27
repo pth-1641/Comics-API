@@ -244,11 +244,3 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT);
-
-// Cron job
-setInterval(
-  () => {
-    axios.get('https://ncomics.onrender.com/new');
-  },
-  870000 // 14m30s
-);
