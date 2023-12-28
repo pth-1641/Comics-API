@@ -342,11 +342,13 @@ class ComicsApi {
       ]);
       const title = $(".book_detail h1").text();
       const thumbnail = $(".book_detail img").attr("src");
-      const description = this.trim(
-        $(".detail-content p")
-          .text()
-          .replace(/TruyenQQ/g, "NComics")
-      );
+      const description =
+        this.trim(
+          $(".detail-content p")
+            .text()
+            .replace(/TruyenQQ/g, "NComics")
+        ) ||
+        `Truyện tranh ${title} được cập nhật nhanh và đầy đủ nhất tại NComics. Bạn đọc đừng quên để lại bình luận và chia sẻ, ủng hộ NComics ra các chương mới nhất của truyện ${title}.`;
       let authors = $(".author p:nth-child(2)").text();
       authors = /, |;\s*| - /.test(authors)
         ? authors.split(/, |;\s*| - /)
