@@ -6,16 +6,15 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// app.use(require('cors')());
-
 // Versions
 app.use('/', cors(), v1);
 app.use(
   '/v2',
-  cors({
-    origin: ['http://ncomics.onrender.com'],
-    optionsSuccessStatus: 200,
-  }),
+  (req, res, next) => {
+    req.headers.origin === 'https://ncomics.onrender.com'
+      ? next()
+      : new Error('Origin not allowed');
+  },
   v2
 );
 
@@ -32,6 +31,15 @@ app.use((req, res) => {
   res.json({
     status: 404,
     message: 'Not Found',
+  });
+});
+
+// @ts-ignore
+app.use((err, req, res, next) => {
+  const status = +(err.message.match(/\d+/) || 500);
+  res.status(status).json({
+    status,
+    message: err.message,
   });
 });
 
