@@ -1,6 +1,6 @@
 {
   "version": 2,
   "name": "comic-api",
-  "builds": [{ "src": "/api/index.ts", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/api/index.ts" }]
+  "builds": [{ "src": "/server.ts", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/server.ts" }]
 }
