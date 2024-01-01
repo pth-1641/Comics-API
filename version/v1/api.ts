@@ -1,22 +1,19 @@
 import express from 'express';
 import axios from 'axios';
-import { Comics } from '..';
-import { userAgents, UALength } from '../user-agent';
-
-const app = express();
-const PORT = process.env.PORT || 8080;
-
-app.use(require('cors')());
+import { Comics } from '.';
+import userAgent from 'random-useragent';
 
 const allStatus = ['all', 'completed', 'ongoing'];
 type Status = 'all' | 'completed' | 'ongoing';
 
+const router = express.Router();
+
 // Genres
-app.get('/genres', async (req, res) => {
+router.get('/genres', async (req, res) => {
   res.json(await Comics.getGenres());
 });
 
-app.get('/genres/:slug', async (req, res, next) => {
+router.get('/genres/:slug', async (req, res, next) => {
   try {
     const { params, query } = req;
     const slug = params.slug;
@@ -44,7 +41,7 @@ const statusPaths = [
 ];
 
 statusPaths.forEach(({ path, callback }) => {
-  app.get(path, async (req, res, next) => {
+  router.get(path, async (req, res, next) => {
     try {
       const { query } = req;
       const status = query.status ? `${query.status}` : 'all';
@@ -58,7 +55,7 @@ statusPaths.forEach(({ path, callback }) => {
 });
 
 // Recommend Comics
-app.get(`/recommend-comics`, async (req, res) => {
+router.get(`/recommend-comics`, async (req, res) => {
   res.json(await Comics.getRecommendComics());
 });
 
@@ -75,7 +72,7 @@ const searchApiPaths = [
 ];
 
 searchApiPaths.forEach(({ path, callback }) => {
-  app.get(path, async (req, res, next) => {
+  router.get(path, async (req, res, next) => {
     try {
       const { query } = req;
       const q = query.q ? `${query.q}` : '';
@@ -109,7 +106,7 @@ const pageParamsApiPaths = [
 ];
 
 pageParamsApiPaths.forEach(({ path, callback }) => {
-  app.get(path, async (req, res, next) => {
+  router.get(path, async (req, res, next) => {
     try {
       const { query } = req;
       const page = query.page ? Number(query.page) : 1;
@@ -133,7 +130,7 @@ const comicIdParamsApiPaths = [
 ];
 
 comicIdParamsApiPaths.forEach(({ path, callback }) => {
-  app.get(path, async (req, res, next) => {
+  router.get(path, async (req, res, next) => {
     try {
       const { params } = req;
       const slug = params.slug;
@@ -145,7 +142,7 @@ comicIdParamsApiPaths.forEach(({ path, callback }) => {
   });
 });
 
-app.get('/comics/:slug/chapters/:chapter_id', async (req, res) => {
+router.get('/comics/:slug/chapters/:chapter_id', async (req, res) => {
   const { params } = req;
   const slug = params.slug;
   const chapter_id = params.chapter_id ? Number(params.chapter_id) : null;
@@ -193,7 +190,7 @@ const topComicsApiPaths = [
 ];
 
 topComicsApiPaths.forEach(({ path, callback }) => {
-  app.get(`/top${path}`, async (req, res) => {
+  router.get(`/top${path}`, async (req, res) => {
     const { query } = req;
     const status = query.status ? query.status : 'all';
     const page = query.page ? Number(query.page) : 1;
@@ -201,7 +198,7 @@ topComicsApiPaths.forEach(({ path, callback }) => {
   });
 });
 
-app.get('/images', async (req, res, next) => {
+router.get('/images', async (req, res, next) => {
   try {
     const src = req.query.src;
     if (!src) throw new Error('Invalid image source');
@@ -210,7 +207,7 @@ app.get('/images', async (req, res, next) => {
       responseType: 'stream',
       headers: {
         referer: `https://${providers[Math.floor(Math.random() * 3)]}`,
-        'User-Agent': userAgents[Math.random() * UALength],
+        'User-Agent': userAgent.getRandom(),
       },
     });
     response.data.pipe(res);
@@ -219,28 +216,4 @@ app.get('/images', async (req, res, next) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.json({
-    Github: 'https://github.com/pth-1641/Comics-API',
-    Issues: 'https://github.com/pth-1641/Comics-API/issues',
-    'Official Website': 'https://ncomics.onrender.com',
-  });
-});
-
-// Error handlers
-app.use((req, res) => {
-  res.status(404).json({
-    status: 404,
-    message: 'Not Found',
-  });
-});
-
-// @ts-ignore
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    status: 500,
-    message: err.message,
-  });
-});
-
-app.listen(PORT);
+export default router;

@@ -2,7 +2,7 @@
   "name": "comics-api",
   "version": "2.9.0",
   "description": "Vietnamese Comics API for Node using scraping technique",
-  "main": "index.ts",
+  "main": "server.ts",
   "repository": {
     "url": "https://github.com/pth-1641/Comics-API",
     "type": "git"
@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon api/index.ts",
+    "dev": "nodemon ./server.ts",
     "vercel-build": "echo pth-1641"
   },
   "dependencies": {
@@ -28,11 +28,14 @@
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "random-useragent": "^0.5.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.17",
     "@types/node": "^20.4.2",
+    "@types/random-useragent": "^0.3.3",
     "@vercel/node": "^2.15.6",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
