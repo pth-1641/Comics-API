@@ -462,9 +462,7 @@ class ComicsApi {
         const host = $(img)
           .attr('src')
           .match(/^\/\/([^/]+)/)[0];
-        const src = `https://comics-api.vercel.app/images?src=https:${$(
-          img
-        ).attr('src')}`;
+        const src = `/images?src=https:${$(img).attr('src')}`;
         const backup_url_1 = cdn_1 ? src.replace(host, cdn_1) : '';
         const backup_url_2 = cdn_2 ? src.replace(host, cdn_2) : '';
         return { page, src, backup_url_1, backup_url_2 };
