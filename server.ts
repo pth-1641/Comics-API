@@ -11,7 +11,13 @@ app.use('/', cors(), v1);
 app.use(
   '/v2',
   cors({
-    origin: 'https://ncomics.onrender.com',
+    origin(origin, callback) {
+      if (origin === 'https://ncomics.onrender.com') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
   }),
   v2
 );

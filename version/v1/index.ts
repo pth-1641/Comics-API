@@ -14,13 +14,19 @@ type Status = 'all' | 'completed' | 'ongoing';
 class ComicsApi {
   private agent: string;
   private hosts: string[];
+  private cdnProviders: string[];
+  private providers: string[];
+  private cdnImageUrl: string;
 
   constructor() {
     this.hosts = process.env.HOSTS?.split(' | ') as string[];
+    this.providers = process.env.PROVIDERS?.split(' | ') as string[];
+    this.cdnProviders = process.env.CDN_PROVIDERS?.split(' | ') as string[];
+    this.cdnImageUrl = process.env.CND_IMAGE_URL as string;
     this.agent = userAgent.getRandom();
   }
 
-  private async createRequest(path: string, host: 0 | 1 | 2 = 1): Promise<any> {
+  private async createRequest(path: string, host: number = 0): Promise<any> {
     try {
       const { data } = await axios.request({
         method: 'GET',
@@ -51,6 +57,10 @@ class ComicsApi {
     return text?.replace(/\n|\t/g, '').trim();
   }
 
+  private randomHost(): number {
+    return Math.floor(Math.random() * this.providers.length + 1);
+  }
+
   private async getComics(
     path: string,
     page: number = 1,
@@ -62,12 +72,11 @@ class ComicsApi {
       completed: 2,
     };
     try {
-      const isEmptyPath = ['tim-truyen?', 'tim-truyen?sort=15'].includes(path);
       const [$, allGenres] = await Promise.all([
         this.createRequest(
           `${path + (path.includes('?') ? '&' : '?')}status=${
             status[statusKey]
-          }&page=${isEmptyPath ? page + 1 : page}`
+          }&page=${page}`
         ),
         this.getGenres(),
       ]);
@@ -83,9 +92,9 @@ class ComicsApi {
       }
       const comics: any = Array.from($('#main_homepage .list_grid li')).map(
         (item) => {
-          const thumbnail = $('.book_avatar img', item).attr('src');
-          const title = $('.book_avatar img', item).attr('alt');
           const id = this.getId($('a', item).attr('href'));
+          const thumbnail = `${this.cdnImageUrl + id}.jpg`;
+          const title = $('.book_avatar img', item).attr('alt');
           const is_trending = !!$('.hot', item).toString();
           const updated_at = $('.time-ago', item).text();
           const short_description = this.trim($('.excerpt', item).text());
@@ -146,7 +155,7 @@ class ComicsApi {
       );
       return {
         comics,
-        total_pages: isEmptyPath ? +total_pages - 1 : +total_pages,
+        total_pages: +total_pages,
         current_page: page,
       };
     } catch (err) {
@@ -156,7 +165,7 @@ class ComicsApi {
 
   public async getGenres(): Promise<any> {
     try {
-      const $ = await this.createRequest('', Math.random() > 0.5 ? 0 : 2);
+      const $ = await this.createRequest('', this.randomHost());
       return Array.from($('#mainNav .clearfix li a')).map((item) => {
         const id = $(item).attr('href').split('/').at(-1);
         const name = this.trim($(item).text());
@@ -391,22 +400,15 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const $ = await this.createRequest(`truyen-tranh/${comicId}-1`, 0);
-      const id = $('.star').attr('data-id');
-      const { data } = await axios.get(
-        `https://${this.hosts[0]}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
-        {
-          headers: {
-            'User-Agent': this.agent,
-          },
-        }
+      const body = await this.createRequest(`truyen-tranh/${comicId}-1`);
+      const id = body('#book_id').attr('value');
+      const $ = await this.createRequest(
+        `/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`
       );
-      const chapters = data.chapters?.map((chapter: any) => {
-        return {
-          id: chapter.chapterId,
-          name: chapter.name,
-        };
-      });
+      const chapters = Array.from($('a')).map((chapter) => ({
+        id: +$(chapter).attr('href').split('/').at(-1),
+        name: $(chapter).text(),
+      }));
       return chapters;
     } catch (err) {
       throw err;
@@ -423,10 +425,13 @@ class ComicsApi {
       const images = Array.from($('.page-chapter img')).map((img, idx) => {
         const src = `https://comics-api.vercel.app/images?src=${$(img).attr(
           'data-sv1'
-        )}`;
+        )}`.replace('cdnnvd.com', this.cdnProviders[1]);
         const backup_src = `https://comics-api.vercel.app/images?src=${$(
           img
-        ).attr('data-sv2')}`;
+        ).attr('data-sv2')}`.replace(
+          'static.nettruyenco.vn',
+          this.cdnProviders[2]
+        );
         return { page: idx + 1, src, backup_src };
       });
       const [comic_name, chapter_name]: any = this.trim(

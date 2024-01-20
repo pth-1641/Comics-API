@@ -202,11 +202,13 @@ router.get('/images', async (req, res, next) => {
   try {
     const src = req.query.src;
     if (!src) throw new Error('Invalid image source');
-    const providers = ['nettruyennew.com', 'truyenqq.com.vn', 'nettruyenco.vn'];
+    const providers = process.env.PROVIDERS?.split(' | ') || [];
     const response = await axios.get(`${src}`, {
       responseType: 'stream',
       headers: {
-        referer: `https://${providers[Math.floor(Math.random() * 3)]}`,
+        referer: `https://${
+          providers[Math.floor(Math.random() * providers.length)]
+        }`,
         'User-Agent': userAgent.getRandom(),
       },
     });
