@@ -350,7 +350,7 @@ class ComicsApi {
         this.getChapters(comicId),
       ]);
       const title = $('.book_detail h1').text();
-      const thumbnail = $('.book_detail img').attr('src');
+      const thumbnail = `${this.cdnImageUrl + comicId}.jpg`;
       const description =
         this.trim(
           $('.detail-content p')
@@ -425,12 +425,12 @@ class ComicsApi {
       const images = Array.from($('.page-chapter img')).map((img, idx) => {
         const src = `https://comics-api.vercel.app/images?src=${$(img).attr(
           'data-sv1'
-        )}`.replace('cdnnvd.com', this.cdnProviders[1]);
+        )}`.replace('cdnnvd.com', this.cdnProviders[0]);
         const backup_src = `https://comics-api.vercel.app/images?src=${$(
           img
         ).attr('data-sv2')}`.replace(
           'static.nettruyenco.vn',
-          this.cdnProviders[2]
+          this.cdnProviders[1]
         );
         return { page: idx + 1, src, backup_src };
       });
