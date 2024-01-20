@@ -178,7 +178,7 @@ class ComicsApi {
   }
 
   public async getRecommendComics(): Promise<any> {
-    const $ = await this.createRequest('', 1);
+    const $ = await this.createRequest('');
     const comics = Array.from($('#div_suggest li')).map((item) => {
       const id = this.getId($('a', item).attr('href'));
       const title = $('img', item).attr('alt');
