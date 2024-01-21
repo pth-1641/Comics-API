@@ -10,15 +10,13 @@ const PORT = process.env.PORT || 8080;
 app.use('/', cors(), v1);
 app.use(
   '/v2',
-  cors({
-    origin(origin, callback) {
-      if (origin === 'https://ncomics.onrender.com') {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
+  (req, res, next) => {
+    if (req.headers.host === 'ncomics.onrender.com') {
+      next();
+    } else {
+      throw new Error('Not allowed by CORS');
+    }
+  },
   v2
 );
 
