@@ -11,6 +11,7 @@ app.use('/', cors(), v1);
 app.use(
   '/v2',
   (req, res, next) => {
+    console.log(req.headers.host);
     if (req.headers.host === 'ncomics.onrender.com') {
       next();
     } else {
