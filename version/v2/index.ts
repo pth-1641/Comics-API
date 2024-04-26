@@ -8,7 +8,7 @@ class ComicsApi {
   private agent: string;
 
   constructor() {
-    this.domain = 'https://www.nettruyen.com';
+    this.domain = process.env.NETTRUYEN_BASE_URL as string;
     this.agent = userAgent.getRandom();
   }
 
