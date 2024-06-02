@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { load } from 'cheerio';
+import { data } from 'cheerio/lib/api/attributes';
 import userAgent from 'random-useragent';
 
 type Status = 'all' | 'completed' | 'ongoing';
@@ -29,7 +30,7 @@ class ComicsApi {
 
   private getComicId(link?: string): string | undefined {
     if (!link) return '';
-    return link?.match(/\/([^/]+)-\d+$/)?.[1];
+    return link.split('/').at(-1);
   }
 
   private getGenreId(link: string): string | undefined {
@@ -84,8 +85,7 @@ class ComicsApi {
         return { status: 404, message: 'Page not found' };
       }
       const comics = Array.from($('#ctl00_divCenter .item')).map((item) => {
-        const thumbnail =
-          'https:' + $('.image img', item).attr('data-original');
+        const thumbnail = $('.image img', item).attr('data-original');
         const title = this.trim($('figcaption h3', item).text());
         const id = this.getComicId($('a', item).attr('href'));
         const is_trending = !!$('.icon-hot', item).toString();
@@ -97,8 +97,8 @@ class ComicsApi {
           const [_, label, detail]: any = this.trim($(col).text())?.match(
             /^(.*?):(.*)$/
           );
-          const value = /, |;\s*| - /.test(detail)
-            ? detail.split(/, |;\s*| - /)
+          const value = /,|;\s*| - /.test(detail)
+            ? detail.split(/,|;\s*| - /)
             : detail;
           const key = keys[label];
           if (key === 'genres') {
@@ -121,7 +121,7 @@ class ComicsApi {
         const lastest_chapters = Array.from($('.comic-item li', item)).map(
           (chap) => {
             const id = Number($('a', chap).attr('data-id'));
-            const name = $('a', chap).text();
+            const name = $('a', chap).attr('title');
             const updated_at = $('.time', chap).text();
             return {
               id,
@@ -159,7 +159,7 @@ class ComicsApi {
 
   public async getChapters(comicId: string): Promise<any> {
     try {
-      const $ = await this.createRequest(`truyen-tranh/${comicId}-1`);
+      const $ = await this.createRequest(`truyen-tranh/${comicId}`);
       const id = $('.star').attr('data-id');
       const { data } = await axios.get(
         `${this.domain}/Comic/Services/ComicService.asmx/ProcessChapterList?comicId=${id}`,
@@ -171,7 +171,7 @@ class ComicsApi {
       );
       const chapters = data.chapters?.map((chapter: any) => {
         return {
-          id: chapter.chapterId,
+          id: +chapter.url.split('-').at(-1),
           name: chapter.name,
         };
       });
@@ -190,15 +190,7 @@ class ComicsApi {
         const description = $(item).attr('data-title');
         return { id: id === 'tim-truyen' ? 'all' : id, name, description };
       });
-      return [
-        ...genres,
-        {
-          id: '16',
-          name: '16+',
-          description:
-            'Là thể loại có nhiều cảnh nóng, đề cập đến các vấn đề nhạy cảm giới tính hay các cảnh bạo lực máu me .... Nói chung là truyện có tác động xấu đến tâm sinh lý của những độc giả chưa đủ 16 tuổi',
-        },
-      ];
+      return genres;
     } catch (err) {
       throw err;
     }
@@ -216,12 +208,12 @@ class ComicsApi {
     const comics = Array.from($('#ctl00_divAlt1 div.item')).map((item) => {
       const id = this.getComicId($('a', item).attr('href'));
       const title = $('a', item).attr('title');
-      const thumbnail = 'https:' + $('img', item).attr('data-src');
+      const thumbnail = $('img', item).attr('data-original');
       const updated_at = this.trim($('.time', item).text());
       const chapter_id = Number(
-        $('.slide-caption > a', item).attr('href').split('/').at(-1)
+        $('.slide-caption > a', item).attr('href').split('-').at(-1)
       );
-      const name = $('.slide-caption > a', item).text();
+      const name = $('.slide-caption > a', item).attr('title');
       return {
         id,
         title,
@@ -355,7 +347,7 @@ class ComicsApi {
 
   public async getTrendingComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('hot?', page);
+      return await this.getComics('truyen-tranh-hot?', page);
     } catch (err) {
       throw err;
     }
@@ -391,15 +383,16 @@ class ComicsApi {
   public async getComicDetail(comicId: string): Promise<any> {
     try {
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${comicId}-1`),
+        this.createRequest(`truyen-tranh/${comicId}`),
         this.getChapters(comicId),
       ]);
       const title = $('.title-detail').text();
-      const thumbnail = 'https:' + $('#item-detail .col-image img').attr('src');
-      const description = $('.detail-content p')
+      const thumbnail = $('#item-detail .col-image img').attr('src');
+      const description = $('.shortened div')
         .text()
         .replace(/\n/g, ' ')
         .replace(/-/g, '')
+        .replace(/NhatTruyen/g, 'NComics')
         .trim();
       let authors = $('.author p:nth-child(2)').text();
       authors = /, |;\s*| - /.test(authors)
@@ -451,21 +444,14 @@ class ComicsApi {
   public async getChapter(comicId: string, chapterId: number): Promise<any> {
     try {
       const [$, chapters] = await Promise.all([
-        this.createRequest(`truyen-tranh/${comicId}/chapter/${chapterId}`),
+        this.createRequest(`truyen-tranh/${comicId}/chuong-${chapterId}`),
         this.getChapters(comicId),
       ]);
-      const [_, cdn_1, cdn_2] = $('#ctl00_divCenter script')
-        .text()
-        .match(/gOpts\.cdn="(.*?)";.*?gOpts\.cdn2="(.*?)";/);
-      const images = Array.from($('.page-chapter img')).map((img) => {
-        const page = Number($(img).attr('data-index'));
-        const host = $(img)
-          .attr('src')
-          .match(/^\/\/([^/]+)/)[0];
-        const src = `/images?src=https:${$(img).attr('src')}`;
-        const backup_url_1 = cdn_1 ? src.replace(host, cdn_1) : '';
-        const backup_url_2 = cdn_2 ? src.replace(host, cdn_2) : '';
-        return { page, src, backup_url_1, backup_url_2 };
+      const images = Array.from($('.page-chapter img')).map((img, idx) => {
+        const src = `/images?src=${$(img).attr('data-sv1')}`;
+        const backup_url = `/images?src=${$(img).attr('data-sv2')}`;
+        const page = parseInt(src.split('/')?.at(-1) || `${idx}`);
+        return { page, src, backup_url };
       });
       const chapter_name = $('.breadcrumb li:last-child').first().text();
       const comic_name = $('.breadcrumb li:nth-last-child(2)').first().text();
@@ -483,53 +469,24 @@ class ComicsApi {
     }
   }
 
-  public async getComments(
-    comicId: string,
-    page: number = 1,
-    chapterId: number = -1
-  ): Promise<any> {
+  public async getComments(comicId: string, page: number = 1): Promise<any> {
     try {
-      const body = await this.createRequest(`truyen-tranh/${comicId}-1`);
-      const id = body('head meta[property="og:image"]')
-        .attr('content')
-        .match(/\/(\d+)\./)[1];
-      const token = body('#ctl00_divCenter > script')
-        .text()
-        .match(/'([^']+)'/)[1];
-      const url = (chapterId: number) =>
-        `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&orderBy=0&chapterId=${chapterId}&parentId=0&pageNumber=${page}&token=${token}`;
-      let data;
-      const [main, backup] = await Promise.all([
-        axios.get(url(chapterId), {
-          headers: { 'User-Agent': this.agent },
-        }),
-        axios.get(url(-1), {
-          headers: { 'User-Agent': this.agent },
-        }),
-      ]);
-      if (main.data.success) {
-        data = main.data;
-      } else if (backup.data.success) {
-        data = backup.data;
-      } else {
-        return {
-          status: 400,
-          message: 'Something went wrong!',
-        };
-      }
-      const total_comments = Number(data.commentCount.replace(',', ''));
-      const $ = load(data.response);
+      const body = await this.createRequest(`truyen-tranh/${comicId}`);
+      const id = body('.star').attr('data-id');
+      const url = `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&pageNumber=${page}`;
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': this.agent },
+      });
+      const total_comments = data.data.commentCount;
+      const $ = load(data.data.response);
       const total_pages = Math.ceil(total_comments / 15);
       if (page > total_pages) {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
-        const avatar = 'https:' + $('.avatar img', item).attr('src');
+        const avatar = $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
         const content = $('.comment-content', item).first().text().trim();
-        const vote_count = $('.comment-footer .vote-up-count', item)
-          .first()
-          .text();
         const stickers = Array.from(
           $(item).find('> .summary > .info > .comment-content > img')
         ).map(
@@ -542,7 +499,7 @@ class ComicsApi {
           .first()
           .attr('title');
         const replies = Array.from($('.item', item)).map((reply) => {
-          const avatar = 'https:' + $('.avatar img', reply).attr('src');
+          const avatar = $('.avatar img', reply).attr('src');
           const username = $('.authorname', reply).text().trim();
           const content = $('.comment-content', reply)
             .clone()
@@ -551,7 +508,6 @@ class ComicsApi {
             .end()
             .text()
             .trim();
-          const vote_count = $('.comment-footer .vote-up-count', reply).text();
           const stickers = Array.from($('.comment-content > img', reply)).map(
             (img) =>
               $(img)
@@ -566,7 +522,7 @@ class ComicsApi {
             content,
             stickers,
             created_at,
-            vote_count: parseInt(vote_count),
+            vote_count: 0,
             mention_user,
           };
         });
@@ -577,7 +533,7 @@ class ComicsApi {
           stickers,
           replies,
           created_at,
-          vote_count: parseInt(vote_count),
+          vote_count: 0,
         };
       });
       return { comments, total_comments, total_pages, current_page: page };

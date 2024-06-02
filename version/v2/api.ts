@@ -134,10 +134,9 @@ router.get('/comics/:slug/comments', async (req, res) => {
   const { params, query } = req;
   const slug = params.slug;
   const page = query.page ? Number(query.page) : 1;
-  const chapter = query.chapter ? Number(query.chapter) : -1;
   // @ts-ignore
   if (!slug) throw Error('Invalid Comic ID');
-  res.json(await Comics.getComments(slug, page, chapter));
+  res.json(await Comics.getComments(slug, page));
 });
 
 // Top Comics

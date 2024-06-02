@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon ./server.ts",
+    "dev": "clear && nodemon ./server.ts",
     "vercel-build": "echo pth-1641"
   },
   "dependencies": {
