@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { load } from 'cheerio';
-import { data } from 'cheerio/lib/api/attributes';
 import userAgent from 'random-useragent';
 
 type Status = 'all' | 'completed' | 'ongoing';
@@ -52,7 +51,7 @@ class ComicsApi {
     page: number = 1,
     statusKey: Status = 'all'
   ): Promise<any> {
-    const keys: any = {
+    const keys: Record<string, string> = {
       'Thể loại': 'genres',
       'Tình trạng': 'status',
       'Lượt xem': 'total_views',
@@ -104,7 +103,9 @@ class ComicsApi {
           if (key === 'genres') {
             const genresList = Array.isArray(value) ? value : [value];
             const genres = genresList.map((genre: string) => {
-              const foundGenre = allGenres.find((g: any) => g.name === genre);
+              const foundGenre = allGenres.find(
+                (g: any) => g.name.toLowerCase() === genre.toLowerCase()
+              );
               return { id: foundGenre?.id, name: foundGenre?.name };
             });
             return { genres };
@@ -130,7 +131,7 @@ class ComicsApi {
             };
           }
         );
-        return Object.assign(
+        const comic = Object.assign(
           {},
           {
             thumbnail,
@@ -150,6 +151,11 @@ class ComicsApi {
           },
           ...cols
         );
+        return {
+          ...comic,
+          total_comments: +comic.total_comments.toString().replace(/\,/g, ''),
+          followers: +comic.followers.toString().replace(/\,/g, ''),
+        };
       });
       return { comics, total_pages: Number(total_pages), current_page: page };
     } catch (err) {
@@ -238,7 +244,7 @@ class ComicsApi {
 
   public async getCompletedComics(page: number = 1): Promise<any> {
     try {
-      return await this.getComics('truyen-full', page);
+      return await this.getComics('tim-truyen?', page, 'completed');
     } catch (err) {
       throw err;
     }
@@ -471,6 +477,7 @@ class ComicsApi {
 
   public async getComments(comicId: string, page: number = 1): Promise<any> {
     try {
+      const avatar = 'https://api.iconify.design/ei/user.svg?height=48';
       const body = await this.createRequest(`truyen-tranh/${comicId}`);
       const id = body('.star').attr('data-id');
       const url = `${this.domain}/Comic/Services/CommentService.asmx/List?comicId=${id}&pageNumber=${page}`;
@@ -484,7 +491,6 @@ class ComicsApi {
         return { status: 400, message: 'Invalid page' };
       }
       const comments = Array.from($('.clearfix')).map((item) => {
-        const avatar = $('.avatar img', item).attr('src');
         const username = $(item).find('.authorname').first().text().trim();
         const content = $('.comment-content', item).first().text().trim();
         const stickers = Array.from(
@@ -499,7 +505,6 @@ class ComicsApi {
           .first()
           .attr('title');
         const replies = Array.from($('.item', item)).map((reply) => {
-          const avatar = $('.avatar img', reply).attr('src');
           const username = $('.authorname', reply).text().trim();
           const content = $('.comment-content', reply)
             .clone()
