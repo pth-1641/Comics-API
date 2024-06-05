@@ -14,16 +14,16 @@ type Status = "all" | "completed" | "ongoing";
 class ComicsApi {
   private agent: string;
   private hosts: string[];
+  private cdnImageUrl: string;
   // private cdnProviders: string[];
   // private providers: string[];
-  // private cdnImageUrl: string;
 
   constructor() {
     this.hosts = process.env.HOSTS?.split(" | ") as string[];
     this.agent = userAgent.getRandom();
+    this.cdnImageUrl = process.env.CND_IMAGE_URL as string;
     // this.providers = process.env.PROVIDERS?.split(" | ") as string[];
     // this.cdnProviders = process.env.CDN_PROVIDERS?.split(" | ") as string[];
-    // this.cdnImageUrl = process.env.CND_IMAGE_URL as string;
   }
 
   private async createRequest(path: string, host: number = 0): Promise<any> {
@@ -112,6 +112,7 @@ class ComicsApi {
             id,
             title,
             thumbnail,
+            backup_thumb: `${this.cdnImageUrl}/${id}.jpg`,
             updated_at: last_chapters[0]?.updated_at || "N/A",
             is_trending,
             total_views: total_views || "N/A",
@@ -356,6 +357,7 @@ class ComicsApi {
       return {
         title,
         thumbnail,
+        backup_thumb: `${this.cdnImageUrl}/${comicId}.jpg`,
         description,
         status,
         genres,
