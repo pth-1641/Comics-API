@@ -19,7 +19,7 @@ path: `/trending-comics?page=${page}`;
 ### **Genres**
 
 ```ts
-path: '/genres';
+path: "/genres";
 ```
 
 ### **Comics By Genre**
@@ -27,7 +27,7 @@ path: '/genres';
 ```ts
 genre_id: string;
 page: number; // option
-status: 'all' | 'completed' | 'ongoing'; // option
+status: "all" | "completed" | "ongoing"; // option
 
 path: `/genres/${genre_id}`;
 ```
@@ -52,7 +52,7 @@ path: `/search-suggest?q=${query}`;
 ### **Recommend Comics**
 
 ```ts
-path: '/recommend-comics';
+path: "/recommend-comics";
 ```
 
 ### **New Comics**
@@ -60,7 +60,7 @@ path: '/recommend-comics';
 ```ts
 page: number; // option
 
-status: 'all' | 'completed' | 'ongoing'; // option
+status: "all" | "completed" | "ongoing"; // option
 
 path: `/new-comics?page=${page}&status=${status}`;
 ```
@@ -69,12 +69,12 @@ path: `/new-comics?page=${page}&status=${status}`;
 
 ```ts
 page: number; // option
-status: 'all' | 'completed' | 'ongoing'; // option
+status: "all" | "completed" | "ongoing"; // option
 
 path: `/recent-update-comics?page=${page}&status=${status}`;
 ```
 
-### **Boy Comics**
+### ~~**Boy Comics**~~
 
 ```ts
 page: number; // option
@@ -82,7 +82,7 @@ page: number; // option
 path: `/boy-comics?page=${page}`;
 ```
 
-### **Girl Comics**
+### ~~**Girl Comics**~~
 
 ```ts
 page: number; // option
@@ -127,7 +127,7 @@ path: `/comics/${comic_id}/chapters/${chapter_id}`;
 
 ```ts
 page: number; // option
-status: 'all' | 'completed' | 'ongoing'; // option
+status: "all" | "completed" | "ongoing"; // option
 
 // Paths
 All: `/top?page=${page}&status=${status}`;
