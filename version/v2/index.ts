@@ -569,7 +569,7 @@ class ComicsApi {
       const $ = load(data);
       const suggestions = Array.from($("li")).map((comic) => {
         const id = this.getComicId($("a", comic).attr("href"));
-        const thumbnail = "https:" + $("img", comic).attr("src");
+        const thumbnail = $("img", comic).attr("src");
         const title = $("h3", comic).text();
         const lastest_chapter = $("i", comic).first().text();
         const genres = $("i", comic).last().text();
