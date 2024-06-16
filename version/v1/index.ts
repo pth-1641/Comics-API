@@ -326,6 +326,7 @@ class ComicsApi {
           $(".detail-content p")
             .text()
             .replace(/nettruyen/gi, "NComics")
+            .replace(/\s+/g, " ")
         ) ||
         `Truyện tranh ${title} được cập nhật nhanh và đầy đủ nhất tại NComics. Bạn đọc đừng quên để lại bình luận và chia sẻ, ủng hộ NComics ra các chương mới nhất của truyện ${title}.`;
       let authors = $(".author p:nth-child(2)").text();
