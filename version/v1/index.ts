@@ -33,6 +33,7 @@ class ComicsApi {
         url: `https://${this.hosts[host]}/${path}`.replace(/\?+/g, "?"),
         headers: {
           "User-Agent": this.agent,
+          Referrer: this.hosts[0],
         },
         httpsAgent: agent,
       });
